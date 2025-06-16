@@ -1,0 +1,262 @@
+/* Общие стили */
+body {
+  min-height: 100vh;
+  flex-direction: column;
+  background: linear-gradient(to bottom, #e5e9ff, #ffffff);
+  font-family: sans-serif;
+  color: #333;
+}
+
+/* -------------------------------
+   Страница создания теста (editor)
+-------------------------------- */
+.test-page.editor {
+  width: fit-content;
+  gap: 10px;
+  flex-direction: column;
+  align-items: start;
+  max-width: 1000px;
+  padding: 32px 24px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.test-page.editor input[type="text"] {
+  width: 100%;
+  max-width: 600px;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.question-editor {
+  background: white;
+  padding: 20px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.question-editor input[type="text"] {
+  margin: 0;
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.option-row input[type="text"] {
+  flex: 1;
+  padding: 8px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.option-row input[type="radio"] {
+  transform: scale(1.2);
+  margin-left: 6px;
+}
+
+.test-page.editor button {
+  padding: 10px 16px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 0;
+  transition: background 0.3s ease;
+}
+
+.test-page.editor button:hover {
+  filter: brightness(0.95);
+}
+
+.test-page.editor button:first-of-type {
+  background-color: #3182ce;
+  color: white;
+  margin-right: 8px;
+}
+
+.test-page.editor button:last-of-type {
+  background-color: #38a169;
+  color: white;
+}
+
+/* -------------------------------
+   Страница прохождения теста
+-------------------------------- */
+.test-page {
+  width: 70%;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.test-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.question-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.nav-button.unanswered { background-color: #ccc; }
+.nav-button.answered   { background-color: #38a169; }
+.nav-button.current    { background-color: #3182ce; }
+
+.question-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: left;
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+}
+
+.question-text {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.nav-action,
+.submit-button {
+  text-align: center;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.nav-action { background-color: #3182ce; }
+.nav-action:hover { background-color: #2c5282; }
+
+.submit-button { background-color: #38a169; }
+.submit-button:hover { background-color: #2f855a; }
+
+.loading {
+  text-align: center;
+  font-size: 20px;
+  padding-top: 100px;
+}
+
+.point {
+  width: 1rem;
+  height: 1rem;
+}
+@media (max-width: 600px) {
+  .test-page {
+    width: 100%;
+    padding: 16px;
+  }
+
+  .question-box,
+  .test-header {
+    max-width: 100%;
+    padding: 16px;
+  }
+
+  .test-page.editor {
+    width: 100%;
+    padding: 16px;
+  }
+
+  .question-editor {
+    padding: 16px;
+  }
+
+  .test-page.editor input[type="text"],
+  .question-editor input[type="text"] {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+
+  .option-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-button {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
+
+  .button-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .nav-action,
+  .submit-button {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+  }
+}

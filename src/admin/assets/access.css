@@ -1,0 +1,186 @@
+/* Общий контейнер */
+.access-manager {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #004080;
+  margin-bottom: 1rem;
+}
+
+/* Радиокнопки */
+.access-type,
+.role-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.access-type label,
+.role-section label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.3rem 0;
+  cursor: pointer;
+  user-select: none;
+}
+.radio-label-text {
+  width: 100%;
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.access-type input[type="radio"] {
+  flex-shrink: 0;
+}
+
+.access-type,
+.role-section input{
+  width: 10% !important;
+}
+
+/* Поля поиска */
+.input-text {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  width: 100%;
+}
+
+/* Списки */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #f9f9f9;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.selectable-list .list-item {
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s ease;
+}
+
+.selectable-list .list-item:hover {
+  background-color: #e3f2fd;
+}
+
+.selectable-list .list-item.selected {
+  background-color: #2196f3;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Предметы (checkbox-лист) */
+.checkbox-list {
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.checkbox-item:last-child {
+  border-bottom: none;
+}
+
+.checkbox-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+/* Информационный текст */
+.info-text {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Кнопка */
+.btn-submit {
+  background-color: #004080;
+  color: #fff;
+  padding: 0.8rem 1.2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  box-shadow: 0 3px 8px rgba(0, 64, 128, 0.25);
+}
+
+.btn-submit:hover {
+  background-color: #003366;
+}
+
+.checkbox-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fafafa;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.checkbox-item:last-child {
+  border-bottom: none;
+}
+
+.checkbox-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  cursor: pointer;
+}

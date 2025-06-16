@@ -1,0 +1,157 @@
+.personal-account-container {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2vw;
+  background: linear-gradient(to bottom, #e5e9ff, #ffffff);
+  min-height: 100vh;
+  width: 100%;
+  font-size: clamp(1rem, 1vw, 1.5rem);
+}
+
+.personal-account-content {
+  display: flex;
+  width: fit-content + 10%;
+  max-width: 1200px;
+  gap: 2vw;
+}
+
+/* Основное содержимое */
+.personal-account-main {
+  flex-grow: 1;
+  background-color: white;
+  padding: 2vw;
+  gap: 2vw;
+  border-radius: 1vw;
+  box-shadow: 0 0.8vw 2vw rgba(0,0,0,0.1);
+}
+
+
+/* Телефон */
+.phone-form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Фото профиля */
+.photo-preview {
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+  gap: 1vw;
+}
+
+.personal-account-main input[type="file"] {
+  padding: clamp(0.5rem, 0.8vw, 1.5rem);
+  font-size: clamp(0.8rem, 1vw, 1.2rem);
+  border-radius: clamp(6px, 0.8vw, 12px);
+  background-color: white;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+/* Основной размер фото */
+.profile-photo {
+  width: 128px;
+  height: 128px;
+  max-width: 128px;
+  max-height: 128px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #ccc;
+}
+
+.profile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Уменьшенная версия (в 2 раза меньше) */
+.profile-photo-small {
+  width: 64px;
+  height: 64px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #ccc;
+}
+.profile-photo-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Мини-версия (в 4 раза меньше) */
+.profile-photo-mini {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #ccc;
+}
+.profile-photo-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.upload-photo-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+/* Кнопки */
+.phone-form button,
+.upload-photo-container button {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  font-size: clamp(1rem, 1vw, 1.25rem);
+  padding: clamp(0.4rem, 0.5vw, 1.2rem) clamp(0.4rem, 0.8vw, 1.2rem);
+  background: linear-gradient(to right, #004799, #0077FF);
+  color: white;
+  border: none;
+  border-radius: clamp(6px, 0.8vw, 12px);
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.phone-form button:hover,
+.upload-photo-container button:hover {
+  background: #333333;
+}
+
+/* Инпут для телефона */
+.phone-form input[type="tel"] {
+  width: auto;
+  padding: clamp(0.4rem, 0.6vw, 1.2rem); 
+  font-size: clamp(1rem, 1vw, 1.5rem);
+  border-radius: clamp(6px, 0.8vw, 12px);
+  text-align: center;
+  border: 1px solid #ccc;
+}
+
+/* Инпут выбора фото */
+.upload-photo-container input[type="file"] {
+  width: auto;
+  padding: clamp(0.4rem, 0.6vw, 1.2rem);
+  font-size: clamp(1rem, 1vw, 1.25rem);
+  border-radius: clamp(6px, 0.8vw, 12px);
+}
+
+/* Сообщения */
+.message {
+  font-size: clamp(1rem, 1vw, 1.25rem); /* Уменьшил max */
+  margin-top: 1vw;
+  color: #0077FF;
+}

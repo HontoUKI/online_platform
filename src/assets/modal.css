@@ -1,0 +1,195 @@
+/* Фон модального окна */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Контент модального окна */
+.modal-content {
+  text-align: center;
+  background: white;
+  padding: clamp(1.4rem, 4.2vw, 2rem);
+  border-radius: 1vw;
+  width: clamp(360px, 40vw, 420px);
+  max-width: 100%;
+  position: relative;
+  box-shadow: 0 0.8vw 2vw rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+/* Заголовок */
+.modal-content h2 {
+  margin-bottom: 1vw;
+  font-size: clamp(1.4rem, 4.2vw, 2rem) !important;
+  font-weight: bold;
+  color: #0051c9 !important;
+}
+
+/* Поля ввода */
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: clamp(1rem, 2.5vw, 1.125rem); /* ≈ 16–18px */
+  font-family: inherit;
+  resize: vertical;
+  min-height: 2.5rem;
+  box-sizing: border-box;
+}
+
+
+.modal-content input[type="checkbox"] {
+  width: auto;
+  flex-shrink: 0;
+  display: inline-block;
+  transform: scale(1); /* если хочешь — можно scale(0.9) */
+  margin: 0;
+  accent-color: #0077FF;
+}
+
+.modal-content label.upload-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
+  margin-bottom: 1vw;
+  cursor: pointer;
+}
+
+
+/* Контейнер строки */
+.modal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1vw;
+  white-space: nowrap;
+  margin-top: clamp(0.9rem, 1vw, 1.2rem);
+  margin-bottom: clamp(0.9rem, 1vw, 1.2rem);
+}
+
+.extra-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1vw;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.extra-options label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5vw;
+  flex-shrink: 0;
+}
+
+.extra-options input[type="checkbox"] {
+  vertical-align: middle;
+  transform: scale(1.2);
+  margin: 0;
+}
+
+.forgot-password {
+  background: none;
+  border: none;
+  color: #0077FF;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.forgot-password:hover {
+  color: #004799;
+}
+
+/* Контейнер телефона (скрыт по умолчанию) */
+.support-phone {
+  display: none;
+  color: #333;
+  font-size: clamp(0.9rem, 1vw, 1.2rem);
+}
+
+/* Показ номера телефона при активном состоянии */
+.show-phone .support-phone {
+  display: inline-block;
+}
+
+/* Кнопки модального окна */
+.modal-content button.login-button,
+.modal-content button.add-lesson-btn {
+  justify-content: center;
+  text-align: center;
+  font-size: clamp(0.8rem, 1vw, 1.5rem);
+  padding: clamp(0.5rem, 0.2vw, 1.5rem) clamp(0.75rem, 0.5vw, 2rem);
+  margin-bottom: 1vh;
+  background: linear-gradient(to right, #004799, #0077FF);
+  color: white;
+  border: none;
+  border-radius: 1vw;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  width: 100%;
+}
+
+.modal-content button.login-button:hover,
+.modal-content button.add-lesson-btn:hover {
+  background: #333333;
+  transform: scale(1.05);
+}
+
+.modal-content button.login-button:active,
+.modal-content button.add-lesson-btn:active {
+  transform: scale(0.98);
+  filter: brightness(0.9);
+}
+
+/* Кнопка закрытия */
+.modal-close-btn {
+  position: absolute;
+  top: 1vw;
+  right: 1vw;
+  background: none !important;
+  border: none;
+  font-size: clamp(2rem, 4.2vw, 2.2rem);
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.modal-close-btn:hover {
+  color: #ff0000;
+}
+
+/* Сообщение об ошибке */
+.error-message {
+  color: #ff0000;
+  margin: 1vw;
+  font-size: clamp(0.8rem, 1vw, 1rem);
+}
+
+/* Анимация появления */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
