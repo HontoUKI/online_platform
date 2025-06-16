@@ -21,15 +21,18 @@ function LessonTeacher() {
 
   const session = JSON.parse(localStorage.getItem('session'));
   const token = session?.access_token;
+  const isTeacher = session?.user?.role === 'teacher';
+
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const serverURL = (import.meta.env.VITE_SERVER_URL || API_URL);
+  const serverURL = import.meta.env.VITE_SERVER_URL || API_URL;
 
-  const getFullPath = (path) => {
-    if (!path) return '#';
-    const fixed = path.replace(/\\/g, '/');
-    return fixed.startsWith('http') ? fixed : `${serverURL}/${fixed}`;
-  };
+  const getFullPath = (path) =>
+    path?.startsWith('http')
+      ? path
+      : `${serverURL}/${path.replace(/\\/g, '/').replace(/^\/+/, '')}`;
+
+
 
   useEffect(() => {
     (async () => {
@@ -88,11 +91,39 @@ function LessonTeacher() {
     }
   };
 
+  const handleDeleteResult = async (resultId) => {
+    if (!window.confirm('Точно удалить результат?')) return;
+
+    try {
+      await apiRequest(`${API_URL}/lessons/result/${resultId}`, {
+        method: 'DELETE',
+        token,
+      });
+      setSubmissions((prev) => prev.filter((s) => s.id !== resultId));
+      setMessage('Результат удалён');
+    } catch (err) {
+      setMessage('Ошибка при удалении результата');
+      handleError(err);
+    }
+  };
+
   const filtered = submissions
     .filter((s) =>
       s.student_name?.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at || 0));
+
+  const averageScore = (() => {
+    if (!filtered.length) return null;
+    if (lessonType === 'Тест') {
+      const total = filtered.reduce((sum, s) => sum + (s.score ?? 0), 0);
+      return Math.round(total / filtered.length);
+    } else {
+      const graded = filtered.filter((s) => grades[s.id] !== undefined);
+      const total = graded.reduce((sum, s) => sum + Number(grades[s.id] || 0), 0);
+      return graded.length ? Math.round(total / graded.length) : null;
+    }
+  })();
 
   if (loading) return <LoadingFallback message="Загружаем данные урока..." />;
   if (error) return <ErrorFallback message={error} />;
@@ -104,6 +135,12 @@ function LessonTeacher() {
         <div className="main-content-container">
           <div className="content fade-in">
             <h1>Проверка заданий</h1>
+
+            {averageScore !== null && (
+              <div style={{ fontWeight: 'bold', marginBottom: '1rem' }}>
+                Средний балл: {averageScore}
+              </div>
+            )}
 
             <input
               type="text"
@@ -132,13 +169,14 @@ function LessonTeacher() {
                         <>
                           <th>Оценка</th>
                           <th>Дата сдачи</th>
+                          <th>{isTeacher ? 'Действие' : ''}</th>
                         </>
                       ) : (
                         <>
                           <th>Файл</th>
                           <th>Комментарий</th>
                           <th>Оценка</th>
-                          <th></th>
+                          <th>Действие</th>
                         </>
                       )}
                     </tr>
@@ -151,6 +189,17 @@ function LessonTeacher() {
                           <>
                             <td>{s.score}</td>
                             <td>{s.submitted_at ? new Date(s.submitted_at).toLocaleDateString() : '—'}</td>
+                            <td>
+                              {isTeacher && (
+                                <button
+                                  onClick={() => handleDeleteResult(s.id)}
+                                  className="hero-btn"
+                                  style={{ background: 'red', color: 'white' }}
+                                >
+                                  Удалить
+                                </button>
+                              )}
+                            </td>
                           </>
                         ) : (
                           <>
@@ -174,12 +223,15 @@ function LessonTeacher() {
                                 type="number"
                                 value={grades[s.id] || ''}
                                 onChange={(e) => handleChange(s.id, e.target.value)}
+                                disabled={!isTeacher}
                               />
                             </td>
                             <td>
-                              <button onClick={() => handleGradeSubmit(s.id)} className="hero-btn">
-                                Сохранить
-                              </button>
+                              {isTeacher && (
+                                <button onClick={() => handleGradeSubmit(s.id)} className="hero-btn">
+                                  Сохранить
+                                </button>
+                              )}
                             </td>
                           </>
                         )}

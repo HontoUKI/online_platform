@@ -90,15 +90,18 @@ const LessonModal = ({ subjectId, onClose, onLessonAdded }) => {
       onLessonAdded();
       onClose();
     } catch (err) {
-      handleError(err, setError);
+        if (err?.response?.status === 409) {
+          setError(err.response.data.detail || 'Тест уже используется в другом уроке');
+        } else {
+          handleError(err, setError);
+        }
     }
   };
 
   const handleOpenTestEditor = () => {
     if (testId) {
       navigate(`/test/edit/${testId}`);
-    }
-  };
+    }};
 
   return (
     <div className="modal-overlay">

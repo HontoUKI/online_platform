@@ -16,11 +16,17 @@ function ModulesTeacherPage() {
   const API_URL = import.meta.env.VITE_API_URL;
   const session = JSON.parse(localStorage.getItem('session'));
   const token = session?.access_token;
+  const role = session?.user?.role;
 
   useEffect(() => {
     (async () => {
       try {
-        const data = await apiRequest(`${API_URL}/access/teacher-modules`, { token });
+        const endpoint =
+          role === 'admin'
+            ? `${API_URL}/access/admin-modules`
+            : `${API_URL}/access/teacher-modules`;
+
+        const data = await apiRequest(endpoint, { token });
         setModules(data);
       } catch (err) {
         handleError(err);
@@ -29,7 +35,7 @@ function ModulesTeacherPage() {
         setLoading(false);
       }
     })();
-  }, [API_URL, token]);
+  }, [API_URL, token, role]);
 
   if (loading) return <LoadingFallback message="Подгружаем модули..." />;
   if (!loading && modules.length === 0)
@@ -37,10 +43,13 @@ function ModulesTeacherPage() {
 
   return (
     <div className="app full-center">
+      <Header />
       <div className="page-container">
         <div className="content">
           <div className="header-bar">
-            <h1 className="title">МОДУЛИ ПРЕПОДАВАТЕЛЯ</h1>
+            <h1 className="title">
+              {role === 'admin' ? 'ВСЕ МОДУЛИ' : 'МОДУЛИ ПРЕПОДАВАТЕЛЯ'}
+            </h1>
           </div>
           <div className="modules-grid">
             {modules.map((mod) => (

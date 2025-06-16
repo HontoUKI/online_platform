@@ -22,7 +22,17 @@ const LoginModal = ({ onClose }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Неверный ИИН или пароль');
+        const resData = await response.json();
+
+        // Если ошибка 403 — показать поддержку
+        if (response.status === 403) {
+          setShowSupport(true);
+          setError(resData.detail || 'Вход временно заблокирован');
+        } else {
+          setError(resData.detail || 'Неверный ИИН или пароль');
+        }
+
+        return;
       }
 
       const data = await response.json();
@@ -38,7 +48,7 @@ const LoginModal = ({ onClose }) => {
       onClose();
       navigate('/user');
     } catch (err) {
-      setError(err.message);
+      setError('Ошибка соединения. Попробуйте позже.');
     }
   };
 
@@ -77,11 +87,6 @@ const LoginModal = ({ onClose }) => {
             </span>
           </div>
         </div>
-
-        {showSupport && (
-          <p className="support-phone">Обратитесь по телефону: +7 (777) 123-45-67</p>
-        )}
-
         {error && <p className="error-message">{error}</p>}
 
         <button className="login-button" onClick={handleLogin}>Войти</button>

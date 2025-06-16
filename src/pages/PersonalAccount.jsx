@@ -184,7 +184,7 @@ function PersonalAccountPage() {
           {!showPasswordForm && (
             <button
               className="hero-btn"
-              style={{ marginTop: '1rem' }}
+              style={{ marginTop: '1rem', width: '100%' }}
               onClick={() => setShowPasswordForm(true)}
             >
               Редактировать пароль

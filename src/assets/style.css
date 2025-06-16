@@ -93,6 +93,7 @@ html, body {
 .hero-btn,
 .search-button,
 .module-footer .start-module-btn,
+.lesson-link-button,
 .back-button {
   text-align: center;
   font-size: clamp(0.875rem, 2vw, 1.125rem); /* от ~14px до ~18px */
@@ -109,7 +110,8 @@ html, body {
 .hero-btn,
 .search-button,
 .module-footer .start-module-btn,
-.back-button {
+.back-button,
+.lesson-link-button {
   background: linear-gradient(to right, #004799, #0077FF);
   color: white;
   transition: background 0.3s ease;
@@ -118,6 +120,7 @@ html, body {
 .hero-btn:hover,
 .search-button:hover,
 .module-footer .start-module-btn:hover,
+.lesson-link-button:hover,
 .back-button:hover {
   background: #333333;
   color: white;
@@ -650,6 +653,10 @@ input[type="password"] {
 .lesson-link{
   text-decoration: none;
   color: #000000;
+}
+.lesson-view{
+  margin-top: 10px;
+  margin-bottom: 15px;
 }
 .lesson-link:hover {
   text-decoration: none;

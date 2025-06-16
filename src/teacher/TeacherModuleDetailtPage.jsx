@@ -20,11 +20,18 @@ function ModuleDetailsTeacherPage() {
 
   const session = JSON.parse(localStorage.getItem('session'));
   const token = session?.access_token;
+  const role = session?.user?.role;
+  const isAdmin = role === 'admin';
+
   const API_URL = import.meta.env.VITE_API_URL;
 
   const fetchModule = async () => {
     try {
-      const data = await apiRequest(`${API_URL}/access/teacher-modules/${id}`, { token });
+      const endpoint = isAdmin
+        ? `${API_URL}/access/admin-modules/${id}`
+        : `${API_URL}/access/teacher-modules/${id}`;
+
+      const data = await apiRequest(endpoint, { token });
       setModule(data);
     } catch (err) {
       handleError(err);
@@ -59,9 +66,7 @@ function ModuleDetailsTeacherPage() {
   };
 
   const handleDeleteLesson = async (lessonId) => {
-    const confirmed = window.confirm(
-      'Вы уверены, что хотите удалить урок и все вложенные файлы?'
-    );
+    const confirmed = window.confirm('Вы уверены, что хотите удалить урок и все вложенные файлы?');
     if (!confirmed) return;
 
     try {
@@ -113,12 +118,17 @@ function ModuleDetailsTeacherPage() {
                       onClick={() => toggleDiscipline(subject.id)}
                     >
                       <h4 className="module-item-title clickable">{subject.title}</h4>
-                      <button
-                        className="add-lesson-btn"
-                        onClick={() => openModal(subject.id)}
-                      >
-                        Добавить урок
-                      </button>
+                      {!isAdmin && (
+                        <button
+                          className="add-lesson-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openModal(subject.id);
+                          }}
+                        >
+                          Добавить урок
+                        </button>
+                      )}
                     </div>
                     {openedDisciplines.includes(subject.id) && (
                       <ul className="lesson-list">
@@ -131,13 +141,15 @@ function ModuleDetailsTeacherPage() {
                             >
                               {lesson.title} ({lesson.type})
                             </Link>
-                            <button
-                              className="delete-lesson-btn"
-                              onClick={() => handleDeleteLesson(lesson.id)}
-                              title="Удалить урок"
-                            >
-                              Удалить
-                            </button>
+                            {!isAdmin && (
+                              <button
+                                className="delete-lesson-btn"
+                                onClick={() => handleDeleteLesson(lesson.id)}
+                                title="Удалить урок"
+                              >
+                                Удалить
+                              </button>
+                            )}
                           </li>
                         ))}
                       </ul>
@@ -147,7 +159,7 @@ function ModuleDetailsTeacherPage() {
               </div>
             </div>
 
-            {isModalOpen && (
+            {!isAdmin && isModalOpen && (
               <LessonModal
                 subjectId={selectedSubject}
                 onClose={closeModal}

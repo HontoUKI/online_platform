@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import Header from '../sections/Header';
 import LoadingFallback from '../components/LoadingFallback';
@@ -24,7 +25,15 @@ function LessonPage() {
   const token = session?.access_token;
   const API_URL = import.meta.env.VITE_API_URL;
 
+  const navigate = useNavigate();
+  const role = session?.user?.role;
+
+
   useEffect(() => {
+    if (role !== 'student') {
+      navigate('/');
+      return;
+    }
     const fetchLesson = async () => {
       try {
         const data = await apiRequest(`${API_URL}/lessons/${lessonId}`, { token });
@@ -121,11 +130,11 @@ function LessonPage() {
   };
 
   const serverURL = import.meta.env.VITE_SERVER_URL || API_URL;
-  const getFullPath = (path) => {
-    if (!path) return '#';
-    const cleanPath = path.replace(/^\/+/, '').replace(/\\/g, '/');
-    return path.startsWith('http') ? path : `${serverURL}/${cleanPath}`;
-  };
+  const getFullPath = (path) =>
+    path?.startsWith('http')
+      ? path
+      : `${serverURL}/${path.replace(/\\/g, '/').replace(/^\/+/, '')}`;
+
 
 
   if (loading) return <LoadingFallback message="Загружаем урок..." />;
@@ -249,11 +258,9 @@ function LessonPage() {
 
 
             <div className="lesson-footer">
-              {module && (
-                <Link to={`/teacher/module/${module.id}`} className="back-button">
-                  ← Назад к модулю
+                <Link to={"/module"} className="back-button">
+                  Назад
                 </Link>
-              )}
             </div>
           </div>
         </div>
