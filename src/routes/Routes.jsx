@@ -14,6 +14,7 @@ import AdminPanel from '../admin/pages/AdminPanel';
 import TestCreatePage from '../teacher/TestCreatePage';
 import LessonTeacher from '../teacher/LessonTeacher';
 import StudentGrades from '../pages/StudentGrades';
+import NotFound from '../pages/NotFound';
 
 const AppRoutes = () => {
   return (
@@ -27,10 +28,11 @@ const AppRoutes = () => {
       <Route path="/lesson/:lessonId" element={<PrivateRoute><LessonPage /></PrivateRoute>} />
       <Route path='/teacher/lesson/:lessonId' element={<PrivateRoute><LessonTeacher /></PrivateRoute>} />
       <Route path='/test/create' element={<PrivateRoute><TestCreatePage/></PrivateRoute>} />
-      <Route path="/test/edit/:testId" element={<TestCreatePage />} /> 
+      <Route path="/test/edit/:testId" element={<PrivateRoute><TestCreatePage /></PrivateRoute>} /> 
       <Route path="/test/:testId" element={<PrivateRoute><TestPage /></PrivateRoute>} />
       <Route path='/grades' element={<PrivateRoute><StudentGrades /></PrivateRoute>} />
-      <Route path='/admin' element={<AdminPanel />} />
+      <Route path='/admin' element={<PrivateRoute><AdminPanel /></PrivateRoute>}/>
+      <Route path='*' element={<NotFound />} />
     </Routes>
   );
 };

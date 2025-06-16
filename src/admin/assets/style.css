@@ -1,7 +1,9 @@
 .admin-panel {
   display: flex;
+  justify-content: center;
   flex-direction: column;
   padding: 20px;
+  overflow-y: auto;
 }
 
 /* Меню: кнопка вызова */
@@ -34,6 +36,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow-y: auto;
 }
 
 .menu-container.open {
@@ -116,7 +119,6 @@
 
 /* Контентная часть */
 .admin-content-area {
-  margin-left: 240px;
   padding: 20px;
 }
 

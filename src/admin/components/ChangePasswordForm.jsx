@@ -6,7 +6,6 @@ import "../assets/style.css";
 function ChangePasswordForm() {
   const [userIin, setUserIin] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [message, setMessage] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
   const session = JSON.parse(localStorage.getItem("session"));
@@ -14,10 +13,9 @@ function ChangePasswordForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
 
     if (!token) {
-      setMessage("Ошибка: вы не авторизованы");
+      alert("Ошибка: вы не авторизованы");
       return;
     }
 
@@ -31,11 +29,11 @@ function ChangePasswordForm() {
         token,
       });
 
-      setMessage("Пароль успешно обновлён");
+      alert("Пароль успешно обновлён");
       setUserIin("");
       setNewPassword("");
     } catch (err) {
-      handleError(err, setMessage);
+      handleError(err, alert);
     }
   };
 
@@ -65,12 +63,9 @@ function ChangePasswordForm() {
           onChange={(e) => setNewPassword(e.target.value)}
           required
         />
-        <button type="submit" className="hero-btn">Сбросить пароль</button>
-        {message && (
-          <p className="status-message" style={{ marginTop: "0.5rem" }}>
-            {message}
-          </p>
-        )}
+        <button type="submit" className="hero-btn">
+          Сбросить пароль
+        </button>
       </form>
     </div>
   );

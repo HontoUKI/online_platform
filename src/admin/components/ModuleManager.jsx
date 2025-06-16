@@ -12,7 +12,6 @@ const ModulesManager = () => {
   const [newModuleDescription, setNewModuleDescription] = useState('');
   const [newModuleCourse, setNewModuleCourse] = useState('');
   const [newSubjectTitle, setNewSubjectTitle] = useState('');
-  const [message, setMessage] = useState('');
 
   const API_URL = import.meta.env.VITE_API_URL;
   const session = JSON.parse(localStorage.getItem('session'));
@@ -27,13 +26,16 @@ const ModulesManager = () => {
       const data = await apiRequest(`${API_URL}/admin/modules`, { token });
       setModules(data);
     } catch (err) {
-      handleError(err);
-      setMessage('Ошибка загрузки модулей');
+      handleError(err, alert);
+      alert('Ошибка загрузки модулей');
     }
   };
 
   const createModule = async () => {
-    if (!newModuleTitle.trim() || !newModuleCourse.trim()) return alert('Введите все поля');
+    if (!newModuleTitle.trim() || !newModuleCourse.trim()) {
+      alert('Введите все поля');
+      return;
+    }
 
     try {
       await apiRequest(`${API_URL}/admin/modules`, {
@@ -51,8 +53,9 @@ const ModulesManager = () => {
       setSelectedModuleId(null);
       setSelectedSubjects([]);
       fetchModules();
+      alert('Модуль создан');
     } catch (err) {
-      handleError(err);
+      handleError(err, alert);
     }
   };
 
@@ -71,8 +74,9 @@ const ModulesManager = () => {
         setSelectedSubjects([]);
       }
       fetchModules();
+      alert('Модуль удалён');
     } catch (err) {
-      handleError(err);
+      handleError(err, alert);
     }
   };
 
@@ -97,8 +101,9 @@ const ModulesManager = () => {
       });
       setNewSubjectTitle('');
       await reloadSubjects();
+      alert('Предмет добавлен');
     } catch (err) {
-      handleError(err);
+      handleError(err, alert);
     }
   };
 
@@ -112,8 +117,9 @@ const ModulesManager = () => {
         token,
       });
       await reloadSubjects();
+      alert('Предмет удалён');
     } catch (err) {
-      handleError(err);
+      handleError(err, alert);
     }
   };
 
@@ -122,7 +128,7 @@ const ModulesManager = () => {
       const updated = await apiRequest(`${API_URL}/admin/modules/${selectedModuleId}`, { token });
       setSelectedSubjects(updated.subjects || []);
     } catch (err) {
-      handleError(err);
+      handleError(err, alert);
     }
   };
 
@@ -226,8 +232,6 @@ const ModulesManager = () => {
           </div>
         ))}
       </div>
-
-      {message && <p className="message" style={{ marginTop: '1.5rem' }}>{message}</p>}
     </div>
   );
 };

@@ -13,7 +13,6 @@ const AccessManager = () => {
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [role, setRole] = useState('student');
   const [canAddLessons, setCanAddLessons] = useState(false);
-  const [message, setMessage] = useState('');
   const [groupSearch, setGroupSearch] = useState('');
   const [moduleSearch, setModuleSearch] = useState('');
 
@@ -23,7 +22,7 @@ const AccessManager = () => {
 
   useEffect(() => {
     if (!token) {
-      setMessage('Ошибка: вы не авторизованы');
+      alert('Ошибка: вы не авторизованы');
       return;
     }
 
@@ -36,8 +35,7 @@ const AccessManager = () => {
         setGroups(groupData);
         setModules(moduleData);
       } catch (err) {
-        setMessage('Ошибка загрузки данных');
-        handleError(err);
+        handleError(err, alert);
       }
     })();
   }, [API_URL, token]);
@@ -73,7 +71,7 @@ const AccessManager = () => {
         token,
       });
 
-      setMessage('Доступ успешно предоставлен');
+      alert('Доступ успешно предоставлен');
       setSelectedSubjects([]);
       setCanAddLessons(false);
       setIin('');
@@ -82,14 +80,13 @@ const AccessManager = () => {
       setAccessTo('group');
       setRole('student');
     } catch (err) {
-      handleError(err, setMessage);
+      handleError(err, alert);
     }
   };
 
   return (
     <div className="access-manager groups-manager-container fade-in">
       <h2 className="title">Управление доступом</h2>
-      {message && <div className="message">{message}</div>}
 
       <section className="access-type">
         <label>

@@ -570,8 +570,7 @@ input[type="file"] {
   background-color: white;
   border: 1px solid #ccc;
   cursor: pointer;
-
-  overflow: hidden;
+  
   text-overflow: ellipsis;
 }
 

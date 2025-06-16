@@ -11,7 +11,6 @@ function UserForm() {
     phone: "",
     password: "",
   });
-  const [message, setMessage] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
   const session = JSON.parse(localStorage.getItem("session"));
@@ -26,21 +25,20 @@ function UserForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
 
     if (!token) {
-      setMessage("Ошибка: вы не авторизованы");
+      alert("Ошибка: вы не авторизованы");
       return;
     }
 
     try {
-      const data = await apiRequest(`${API_URL}/admin/users/`, {
+      await apiRequest(`${API_URL}/admin/users/`, {
         method: "POST",
         data: formData,
         token,
       });
 
-      setMessage("Пользователь успешно добавлен");
+      alert("Пользователь успешно добавлен");
       setFormData({
         iin: "",
         full_name: "",
@@ -49,7 +47,7 @@ function UserForm() {
         password: "",
       });
     } catch (error) {
-      handleError(error, setMessage);
+      handleError(error, alert);
     }
   };
 
@@ -111,11 +109,6 @@ function UserForm() {
         <button type="submit" className="hero-btn">
           Зарегистрировать
         </button>
-        {message && (
-          <p className="status-message" style={{ marginTop: "0.5rem" }}>
-            {message}
-          </p>
-        )}
       </form>
     </div>
   );

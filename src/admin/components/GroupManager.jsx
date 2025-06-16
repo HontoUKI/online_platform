@@ -13,7 +13,6 @@ const GroupsManager = () => {
   const [groupUsers, setGroupUsers] = useState([]);
   const [userIinToAdd, setUserIinToAdd] = useState("");
   const [excelFile, setExcelFile] = useState(null);
-  const [message, setMessage] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
   const session = JSON.parse(localStorage.getItem("session"));
@@ -28,7 +27,7 @@ const GroupsManager = () => {
       const data = await apiRequest(`${API_URL}/admin/groups`, { token });
       setGroups(data);
     } catch (err) {
-      handleError(err);
+      handleError(err, alert);
     }
   };
 
@@ -46,8 +45,9 @@ const GroupsManager = () => {
       setGroups((prev) => [...prev, data]);
       setNewGroupName("");
       setNewGroupDescription("");
+      alert("Группа успешно создана");
     } catch (err) {
-      handleError(err);
+      handleError(err, alert);
     }
   };
 
@@ -57,17 +57,19 @@ const GroupsManager = () => {
       setGroupUsers(data);
       setSelectedGroupId(groupId);
     } catch (err) {
-      handleError(err);
+      handleError(err, alert);
     }
   };
 
   const addUserToGroup = async () => {
     if (!userIinToAdd.trim()) return alert("Введите ИИН пользователя");
-
     try {
       const user = await apiRequest(`${API_URL}/user/by-iin/${userIinToAdd}`, { token });
 
-      if (groupUsers.some((u) => u.id === user.id)) return alert("Пользователь уже в группе");
+      if (groupUsers.some((u) => u.id === user.id)) {
+        alert("Пользователь уже в группе");
+        return;
+      }
 
       await apiRequest(`${API_URL}/admin/groups/${selectedGroupId}/users`, {
         method: "POST",
@@ -77,8 +79,9 @@ const GroupsManager = () => {
 
       setGroupUsers((prev) => [...prev, user]);
       setUserIinToAdd("");
+      alert("Пользователь добавлен в группу");
     } catch (err) {
-      handleError(err);
+      handleError(err, alert);
     }
   };
 
@@ -90,8 +93,9 @@ const GroupsManager = () => {
         silent: true,
       });
       setGroupUsers((prev) => prev.filter((u) => u.id !== userId));
+      alert("Пользователь удалён из группы");
     } catch (err) {
-      handleError(err);
+      handleError(err, alert);
     }
   };
 
@@ -108,13 +112,16 @@ const GroupsManager = () => {
         body: formData,
       });
 
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
 
       alert("Группа и пользователи успешно загружены");
       setExcelFile(null);
       fetchGroups();
     } catch (err) {
-      handleError(err);
+      handleError(err, alert);
     }
   };
 
@@ -167,7 +174,9 @@ const GroupsManager = () => {
           <div key={group.id} className="group-card">
             <div className="group-card-header">
               <h4>{group.name}</h4>
-              <p className="group-description">{group.description || "Без описания"}</p>
+              <p className="group-description">
+                {group.description || "Без описания"}
+              </p>
               <button
                 className="hero-btn"
                 onClick={() =>
@@ -182,7 +191,7 @@ const GroupsManager = () => {
 
             {selectedGroupId === group.id && (
               <>
-                <div className="user-add-container" style={{ marginTop: '1rem' }}>
+                <div className="user-add-container" style={{ marginTop: "1rem" }}>
                   <input
                     className="input"
                     placeholder="ИИН пользователя"
@@ -196,36 +205,36 @@ const GroupsManager = () => {
                 </div>
 
                 {groupUsers.length === 0 ? (
-                  <p className="no-users-text" style={{ marginTop: '1rem' }}>
+                  <p className="no-users-text" style={{ marginTop: "1rem" }}>
                     Нет пользователей в группе
                   </p>
                 ) : (
                   <div className="table-wrapper">
-                    <table className="table" style={{ marginTop: '1rem' }}>
-                    <thead>
-                      <tr>
-                        <th>ФИО</th>
-                        <th>ИИН</th>
-                        <th>Действия</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {groupUsers.map((user) => (
-                        <tr key={user.id}>
-                          <td>{user.full_name}</td>
-                          <td>{user.iin}</td>
-                          <td>
-                            <button
-                              onClick={() => removeUserFromGroup(user.id)}
-                              className="hero-btn danger"
-                            >
-                              Удалить
-                            </button>
-                          </td>
+                    <table className="table" style={{ marginTop: "1rem" }}>
+                      <thead>
+                        <tr>
+                          <th>ФИО</th>
+                          <th>ИИН</th>
+                          <th>Действия</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {groupUsers.map((user) => (
+                          <tr key={user.id}>
+                            <td>{user.full_name}</td>
+                            <td>{user.iin}</td>
+                            <td>
+                              <button
+                                onClick={() => removeUserFromGroup(user.id)}
+                                className="hero-btn danger"
+                              >
+                                Удалить
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </>
