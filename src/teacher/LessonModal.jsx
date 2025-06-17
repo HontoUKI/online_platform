@@ -35,6 +35,20 @@ const LessonModal = ({ subjectId, onClose, onLessonAdded }) => {
       })();
     }
   }, [type, subjectId, token, API_URL]);
+  
+  useEffect(() => {
+  const handleFocus = () => {
+    if (type === 'Тест') {
+      apiRequest(`${API_URL}/tests/by-subject/${subjectId}`, { token })
+        .then((data) => setAvailableTests(data))
+        .catch(() => setAvailableTests([]));
+    }
+  };
+
+  window.addEventListener('focus', handleFocus);
+  return () => window.removeEventListener('focus', handleFocus);
+}, [type, subjectId, token, API_URL]);
+
 
   useEffect(() => {
     if (testId) {

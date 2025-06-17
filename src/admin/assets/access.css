@@ -74,7 +74,7 @@
   border-radius: 6px;
   background: #f9f9f9;
   max-height: 180px;
-  overflow-y: auto;
+  overflow: auto;
 }
 
 .selectable-list .list-item {
@@ -183,4 +183,17 @@
   text-overflow: ellipsis;
   width: 100%;
   cursor: pointer;
+}
+
+.scrollable-list {
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+
+.scrollable-list {
+  overflow-x: auto;
+  white-space: nowrap;
 }

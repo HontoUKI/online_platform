@@ -6,15 +6,18 @@ import ModuleManager from "../components/ModuleManager";
 import ChangePasswordForm from "../components/ChangePasswordForm";
 import GroupManager from "../components/GroupManager";
 import AccessManager from "../components/AccessManager";
-
+import UserList from "../components/UserList";
 import "../assets/style.css";
+
 
 const sections = [
   { id: "users", label: "Добавить пользователя" },
-  { id: "modules", label: "Управление модулями" },
   { id: "reset", label: "Сброс пароля" },
+  { id: "userlist", label: "Список пользователей" },
+  { id: "modules", label: "Управление модулями" },
   { id: "groups", label: "Управление группами" },
   { id: "access", label: "Назначить доступы" },
+
 ];
 
 function AdminPanel() {
@@ -39,6 +42,8 @@ function AdminPanel() {
         return <GroupManager />;
       case "access":
         return <AccessManager />;
+      case "userlist":
+        return <UserList />
       default:
         return null;
     }

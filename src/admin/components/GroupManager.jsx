@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { apiRequest } from "../../utils/apiRequest";
 import { handleError } from "../../utils/handleError";
 import "../../assets/style.css";
@@ -13,6 +13,8 @@ const GroupsManager = () => {
   const [groupUsers, setGroupUsers] = useState([]);
   const [userIinToAdd, setUserIinToAdd] = useState("");
   const [excelFile, setExcelFile] = useState(null);
+
+  const fileInputRef = useRef(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
   const session = JSON.parse(localStorage.getItem("session"));
@@ -36,10 +38,7 @@ const GroupsManager = () => {
     try {
       const data = await apiRequest(`${API_URL}/admin/groups`, {
         method: "POST",
-        data: {
-          name: newGroupName,
-          description: newGroupDescription,
-        },
+        data: { name: newGroupName, description: newGroupDescription },
         token,
       });
       setGroups((prev) => [...prev, data]);
@@ -99,9 +98,44 @@ const GroupsManager = () => {
     }
   };
 
+  const deleteGroupOnly = async (groupId) => {
+    if (!window.confirm("Удалить только группу без удаления пользователей?")) return;
+    try {
+      await apiRequest(`${API_URL}/admin/groups/${groupId}`, {
+        method: "DELETE",
+        token,
+      });
+      setGroups((prev) => prev.filter((g) => g.id !== groupId));
+      if (selectedGroupId === groupId) {
+        setSelectedGroupId(null);
+        setGroupUsers([]);
+      }
+      alert("Группа удалена");
+    } catch (err) {
+      handleError(err, alert);
+    }
+  };
+
+  const deleteGroupWithUsers = async (groupId) => {
+    if (!window.confirm("Удалить группу вместе с пользователями? Это необратимо.")) return;
+    try {
+      await apiRequest(`${API_URL}/admin/groups/${groupId}/with-users`, {
+        method: "DELETE",
+        token,
+      });
+      setGroups((prev) => prev.filter((g) => g.id !== groupId));
+      if (selectedGroupId === groupId) {
+        setSelectedGroupId(null);
+        setGroupUsers([]);
+      }
+      alert("Группа и пользователи удалены");
+    } catch (err) {
+      handleError(err, alert);
+    }
+  };
+
   const handleExcelUpload = async () => {
     if (!excelFile) return alert("Выберите Excel-файл");
-
     const formData = new FormData();
     formData.append("file", excelFile);
 
@@ -118,6 +152,7 @@ const GroupsManager = () => {
       }
 
       alert("Группа и пользователи успешно загружены");
+      fileInputRef.current.value = null;
       setExcelFile(null);
       fetchGroups();
     } catch (err) {
@@ -144,6 +179,7 @@ const GroupsManager = () => {
         <input
           type="file"
           accept=".xlsx"
+          ref={fileInputRef}
           onChange={(e) => setExcelFile(e.target.files[0])}
         />
         <button className="hero-btn" onClick={handleExcelUpload}>
@@ -177,16 +213,24 @@ const GroupsManager = () => {
               <p className="group-description">
                 {group.description || "Без описания"}
               </p>
-              <button
-                className="hero-btn"
-                onClick={() =>
-                  selectedGroupId === group.id
-                    ? setSelectedGroupId(null)
-                    : fetchGroupUsers(group.id)
-                }
-              >
-                {selectedGroupId === group.id ? "Закрыть" : "Открыть"}
-              </button>
+              <div className="group-card-buttons">
+                <button
+                  className="hero-btn"
+                  onClick={() =>
+                    selectedGroupId === group.id
+                      ? setSelectedGroupId(null)
+                      : fetchGroupUsers(group.id)
+                  }
+                >
+                  {selectedGroupId === group.id ? "Закрыть" : "Открыть"}
+                </button>
+                <button className="hero-btn danger" onClick={() => deleteGroupOnly(group.id)}>
+                  Удалить группу
+                </button>
+                <button className="hero-btn danger" onClick={() => deleteGroupWithUsers(group.id)}>
+                  Удалить с пользователями
+                </button>
+              </div>
             </div>
 
             {selectedGroupId === group.id && (

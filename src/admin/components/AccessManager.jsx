@@ -19,7 +19,7 @@ const AccessManager = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const session = JSON.parse(localStorage.getItem('session'));
   const token = session?.access_token;
-
+  
   useEffect(() => {
     if (!token) {
       alert('Ошибка: вы не авторизованы');
@@ -30,7 +30,7 @@ const AccessManager = () => {
       try {
         const [groupData, moduleData] = await Promise.all([
           apiRequest(`${API_URL}/admin/groups`, { token }),
-          apiRequest(`${API_URL}/admin/modules`, { token }),
+          apiRequest(`${API_URL}/admin/modules/with-teachers`, { token }),
         ]);
         setGroups(groupData);
         setModules(moduleData);
@@ -47,8 +47,20 @@ const AccessManager = () => {
         : [...prev, subjectId]
     );
   };
+  const refreshModules = async () => {
+    try {
+      const moduleData = await apiRequest(`${API_URL}/admin/modules/with-teachers`, { token });
+      setModules(moduleData);
+    } catch (err) {
+      handleError(err, alert);
+    }
+  };
 
   const handleGrantAccess = async () => {
+    if (!selectedModule || (accessTo === 'teacher' && !iin.trim())) {
+      alert('Пожалуйста, выберите модуль и введите ИИН преподавателя');
+      return;
+    }
     const endpoint =
       accessTo === 'group'
         ? `${API_URL}/access/admin/group-to-module`
@@ -72,6 +84,7 @@ const AccessManager = () => {
       });
 
       alert('Доступ успешно предоставлен');
+      await refreshModules();
       setSelectedSubjects([]);
       setCanAddLessons(false);
       setIin('');
@@ -120,19 +133,21 @@ const AccessManager = () => {
             value={groupSearch}
             onChange={(e) => setGroupSearch(e.target.value)}
           />
-          <ul className="list selectable-list">
-            {groups
-              .filter(g => g.name.toLowerCase().includes(groupSearch.toLowerCase()))
-              .map(group => (
-                <li
-                  key={group.id}
-                  className={`list-item ${selectedGroup?.id === group.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedGroup(group)}
-                >
-                  {group.name}
-                </li>
-              ))}
-          </ul>
+          <div className="scrollable-list">
+            <ul className="list selectable-list">
+              {groups
+                .filter(g => g.name.toLowerCase().includes(groupSearch.toLowerCase()))
+                .map(group => (
+                  <li
+                    key={group.id}
+                    className={`list-item ${selectedGroup?.id === group.id ? 'selected' : ''}`}
+                    onClick={() => setSelectedGroup(group)}
+                  >
+                    {group.name}
+                  </li>
+                ))}
+            </ul>
+          </div>
         </section>
       )}
 
@@ -159,24 +174,26 @@ const AccessManager = () => {
           value={moduleSearch}
           onChange={(e) => setModuleSearch(e.target.value)}
         />
-        <ul className="list selectable-list">
-          {modules
-            .filter(mod =>
-              `${mod.title} ${mod.course}`.toLowerCase().includes(moduleSearch.toLowerCase())
-            )
-            .map((mod) => (
-              <li
-                key={mod.id}
-                className={`list-item ${selectedModule?.id === mod.id ? 'selected' : ''}`}
-                onClick={() => {
-                  setSelectedModule(mod);
-                  setSelectedSubjects([]);
-                }}
-              >
-                {mod.title} — {mod.course} курс
-              </li>
-            ))}
-        </ul>
+        <div className="scrollable-list">
+          <ul className="list selectable-list">
+            {modules
+              .filter(mod =>
+                `${mod.title} ${mod.course}`.toLowerCase().includes(moduleSearch.toLowerCase())
+              )
+              .map((mod) => (
+                <li
+                  key={mod.id}
+                  className={`list-item ${selectedModule?.id === mod.id ? 'selected' : ''}`}
+                  onClick={() => {
+                    setSelectedModule(mod);
+                    setSelectedSubjects([]);
+                  }}
+                >
+                  {mod.title} — {mod.course} курс
+                </li>
+              ))}
+          </ul>
+        </div>
       </section>
 
       {selectedModule && (
@@ -195,6 +212,11 @@ const AccessManager = () => {
                     onChange={() => handleToggleSubject(subj.id)}
                   />
                   {subj.title}
+                  {subj.teacher && (
+                    <span className="assigned-label">
+                      — Назначен: {subj.teacher.full_name || subj.teacher.iin}
+                    </span>
+                  )}
                 </label>
               </li>
             ))}
