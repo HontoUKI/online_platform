@@ -155,7 +155,7 @@ const LessonModal = ({ subjectId, onClose, onLessonAdded }) => {
               <button
                 className="add-lesson-btn"
                 onClick={() => {
-                  const url = `/test/create?subject=${subjectId}`;
+                  const url = `/test/create`;
                   window.open(url, '_blank');
                 }}
               >

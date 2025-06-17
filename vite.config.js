@@ -9,6 +9,6 @@ export default defineConfig({
   preview: {
     host: "0.0.0.0",
     port: 10000,
-    allowedHosts: ["online-platform-t3xm.onrender.com"], // ← добавь сюда Render-домен
+    allowedHosts: ["online-platform-t3xm.onrender.com", "do.vtgk.kz"]
   },
 });
