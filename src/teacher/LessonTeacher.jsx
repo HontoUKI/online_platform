@@ -8,6 +8,15 @@ import { handleError } from '../utils/handleError';
 import withSessionGuard from '../utils/withSessionGuard';
 import '../assets/style.css';
 
+const triggerDownload = (url) => {
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = '';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 function LessonTeacher() {
   const { lessonId } = useParams();
   const location = useLocation();
@@ -27,10 +36,13 @@ function LessonTeacher() {
   const API_URL = import.meta.env.VITE_API_URL;
   const serverURL = import.meta.env.VITE_SERVER_URL || API_URL;
 
-  const getFullPath = (path) =>
-    path?.startsWith('http')
-      ? path
-      : `${serverURL}/files/download/${path.replace(/\\/g, '/').replace(/^\/+/, '')}`
+  const getFullPath = (path) => {
+    if (!path) return '';
+    const normalized = path.replace(/\\/g, '/').replace(/^\/+/, '');
+    return normalized.startsWith('static/')
+      ? `${serverURL}/files/download/${normalized.replace(/^static\//, '')}`
+      : normalized;
+  };
 
 
 
@@ -204,18 +216,19 @@ function LessonTeacher() {
                         ) : (
                           <>
                             <td>
-                              {s.file_path ? (
-                                <a
-                                  href={getFullPath(s.file_path)}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="lesson-link"
-                                >
-                                  {s.file_path.split('/').pop()}
-                                </a>
-                              ) : (
-                                '—'
-                              )}
+                              <button
+                                onClick={() => triggerDownload(getFullPath(s.file_path))}
+                                className="lesson-link"
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  padding: 0,
+                                  color: '#0366d6',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                {s.file_path.split('/').pop()}
+                              </button>
                             </td>
                             <td>{s.comment || '—'}</td>
                             <td>

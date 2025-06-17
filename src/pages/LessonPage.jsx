@@ -8,6 +8,15 @@ import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
 import '../assets/style.css';
 
+const triggerDownload = (url) => {
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = '';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 function LessonPage() {
   const { lessonId } = useParams();
   const location = useLocation();
@@ -133,10 +142,15 @@ function LessonPage() {
   };
 
   const serverURL = import.meta.env.VITE_SERVER_URL || API_URL;
-  const getFullPath = (path) =>
-    path?.startsWith('http')
-      ? path
-      : `${serverURL}/files/download/${path.replace(/\\/g, '/').replace(/^\/+/, '')}`
+  const getFullPath = (path) => {
+      if (!path) return '';
+      const normalized = path.replace(/\\/g, '/').replace(/^\/+/, '');
+      return normalized.startsWith('static/')
+        ? `${serverURL}/files/download/${normalized.replace(/^static\//, '')}`
+        : normalized;
+    };
+
+
 
 
 
@@ -229,9 +243,13 @@ function LessonPage() {
                       <ul>
                         {submittedFiles.map((f) => (
                           <li key={f.id}>
-                            <a href={getFullPath(f.file_path)} target="_blank" rel="noopener noreferrer">
+                            <button
+                              onClick={() => triggerDownload(getFullPath(f.file_path))}
+                              className="link-button"
+                              style={{ background: 'none', border: 'none', padding: 0, color: '#0366d6', cursor: 'pointer' }}
+                            >
                               {f.file_path.split('/').pop()}
-                            </a>
+                            </button>
                             {f.comment && <em style={{ marginLeft: '0.5vw' }}>— {f.comment}</em>}
                             {f.grade && (
                               <span style={{ marginLeft: '1vw', color: 'green' }}>
@@ -258,7 +276,6 @@ function LessonPage() {
                 </>
               )}
             </div>
-
 
             <div className="lesson-footer">
                 <Link to={"/module"} className="back-button">
