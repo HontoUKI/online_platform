@@ -93,10 +93,6 @@ function ModuleDetailsPage() {
                 ))}
               </div>
             </div>
-
-            <div className="module-footer">
-              <button className="start-module-btn">Недавно добавленные задания</button>
-            </div>
           </div>
         </div>
       </div>
