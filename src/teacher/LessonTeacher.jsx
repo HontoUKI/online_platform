@@ -30,7 +30,7 @@ function LessonTeacher() {
   const getFullPath = (path) =>
     path?.startsWith('http')
       ? path
-      : `${serverURL}/${path.replace(/\\/g, '/').replace(/^\/+/, '')}`;
+      : `${serverURL}/files/download/${path.replace(/\\/g, '/').replace(/^\/+/, '')}`
 
 
 

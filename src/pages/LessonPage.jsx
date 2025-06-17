@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import Header from '../sections/Header';
@@ -20,6 +20,9 @@ function LessonPage() {
   const [comment, setComment] = useState('');
   const [uploadMessage, setUploadMessage] = useState('');
   const [submittedFiles, setSubmittedFiles] = useState([]);
+
+  const fileInputRef = useRef(null);
+
 
   const session = JSON.parse(localStorage.getItem('session'));
   const token = session?.access_token;
@@ -101,7 +104,7 @@ function LessonPage() {
       setUploadMessage('Задание успешно отправлено!');
       setHomeworkFiles([]);
       setComment('');
-
+      fileInputRef.current.value = null;
       const updated = await apiRequest(`${API_URL}/lessons/${lessonId}/my-submissions`, { token });
       setSubmittedFiles(updated);
     } catch (err) {
@@ -133,7 +136,7 @@ function LessonPage() {
   const getFullPath = (path) =>
     path?.startsWith('http')
       ? path
-      : `${serverURL}/${path.replace(/\\/g, '/').replace(/^\/+/, '')}`;
+      : `${serverURL}/files/download/${path.replace(/\\/g, '/').replace(/^\/+/, '')}`
 
 
 
@@ -209,7 +212,7 @@ function LessonPage() {
                       onChange={(e) => setComment(e.target.value)}
                       style={{ width: '100%', marginBottom: '1vw', padding: '0.5vw' }}
                     />
-                    <input type="file" multiple onChange={handleFileChange} />
+                    <input type="file" multiple onChange={handleFileChange} ref={fileInputRef} />
                     <button
                       onClick={handleHomeworkSubmit}
                       disabled={homeworkFiles.length === 0 && !comment}

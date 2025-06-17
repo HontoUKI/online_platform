@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../assets/style.css'; // если нужны общие стили
+import '../assets/style.css';
 
 function NotFound() {
   return (
