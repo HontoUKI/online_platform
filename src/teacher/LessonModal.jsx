@@ -170,7 +170,7 @@ const LessonModal = ({ subjectId, onClose, onLessonAdded }) => {
                 className="add-lesson-btn"
                 onClick={() => {
                   window.open(url, '_blank');
-                  setTimeout(() => navigate(`/test/edit/${testId}`), 100);
+                  setTimeout(() => navigate(`/test/create`), 100);
                 }}
               >
                 + Новый тест
