@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { apiRequest } from '../utils/apiRequest'; // или свой fetch
+import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children, setToast }) => {
   const [auth, setAuth] = useState({ checked: false, valid: false });
   const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const session = JSON.parse(localStorage.getItem('session'));
     const token = session?.access_token;
@@ -21,13 +22,13 @@ const PrivateRoute = ({ children }) => {
         setAuth({ checked: true, valid: true });
       } catch (err) {
         localStorage.removeItem('session');
-        handleError(err, alert);
+        handleError(err, setToast);
         setAuth({ checked: true, valid: false });
       }
     })();
-  }, []);
+  }, [API_URL, setToast]);
 
-  if (!auth.checked) return null; // можно вставить Skeleton или Spinner
+  if (!auth.checked) return null; // или Spinner
   if (!auth.valid) return <Navigate to="/" replace />;
   return children;
 };

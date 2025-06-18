@@ -4,7 +4,7 @@ import { handleError } from "../../utils/handleError";
 import "../../assets/style.css";
 import "../assets/group_style.css";
 
-const GroupsManager = () => {
+const GroupsManager = ({ setToast }) => {
   const [groups, setGroups] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [newGroupName, setNewGroupName] = useState("");
@@ -15,7 +15,6 @@ const GroupsManager = () => {
   const [excelFile, setExcelFile] = useState(null);
 
   const fileInputRef = useRef(null);
-
   const API_URL = import.meta.env.VITE_API_URL;
   const session = JSON.parse(localStorage.getItem("session"));
   const token = session?.access_token;
@@ -29,12 +28,15 @@ const GroupsManager = () => {
       const data = await apiRequest(`${API_URL}/admin/groups`, { token });
       setGroups(data);
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
   const createGroup = async () => {
-    if (!newGroupName.trim()) return alert("Введите название группы");
+    if (!newGroupName.trim()) {
+      return setToast({ message: "Введите название группы", type: "error" });
+    }
+
     try {
       const data = await apiRequest(`${API_URL}/admin/groups`, {
         method: "POST",
@@ -44,9 +46,9 @@ const GroupsManager = () => {
       setGroups((prev) => [...prev, data]);
       setNewGroupName("");
       setNewGroupDescription("");
-      alert("Группа успешно создана");
+      setToast({ message: "Группа успешно создана", type: "success" });
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
@@ -56,18 +58,20 @@ const GroupsManager = () => {
       setGroupUsers(data);
       setSelectedGroupId(groupId);
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
   const addUserToGroup = async () => {
-    if (!userIinToAdd.trim()) return alert("Введите ИИН пользователя");
+    if (!userIinToAdd.trim()) {
+      return setToast({ message: "Введите ИИН пользователя", type: "error" });
+    }
+
     try {
       const user = await apiRequest(`${API_URL}/user/by-iin/${userIinToAdd}`, { token });
 
       if (groupUsers.some((u) => u.id === user.id)) {
-        alert("Пользователь уже в группе");
-        return;
+        return setToast({ message: "Пользователь уже в группе", type: "info" });
       }
 
       await apiRequest(`${API_URL}/admin/groups/${selectedGroupId}/users`, {
@@ -78,10 +82,20 @@ const GroupsManager = () => {
 
       setGroupUsers((prev) => [...prev, user]);
       setUserIinToAdd("");
-      alert("Пользователь добавлен в группу");
+      setToast({ message: "Пользователь добавлен в группу", type: "success" });
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
+  };
+
+  const confirmRemoveUser = (userId) => {
+    const user = groupUsers.find((u) => u.id === userId);
+    setToast({
+      message: `Удалить ${user?.full_name || "пользователя"} из группы?`,
+      type: "error",
+      actionText: "Удалить",
+      onAction: () => removeUserFromGroup(userId),
+    });
   };
 
   const removeUserFromGroup = async (userId) => {
@@ -92,14 +106,24 @@ const GroupsManager = () => {
         silent: true,
       });
       setGroupUsers((prev) => prev.filter((u) => u.id !== userId));
-      alert("Пользователь удалён из группы");
+      setToast({ message: "Пользователь удалён из группы", type: "success" });
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
+  const confirmDeleteGroup = (groupId, withUsers = false) => {
+    setToast({
+      message: withUsers
+        ? "Удалить группу вместе с пользователями? Это необратимо."
+        : "Удалить только группу без удаления пользователей?",
+      type: "error",
+      actionText: "Удалить",
+      onAction: () => (withUsers ? deleteGroupWithUsers(groupId) : deleteGroupOnly(groupId)),
+    });
+  };
+
   const deleteGroupOnly = async (groupId) => {
-    if (!window.confirm("Удалить только группу без удаления пользователей?")) return;
     try {
       await apiRequest(`${API_URL}/admin/groups/${groupId}`, {
         method: "DELETE",
@@ -110,14 +134,13 @@ const GroupsManager = () => {
         setSelectedGroupId(null);
         setGroupUsers([]);
       }
-      alert("Группа удалена");
+      setToast({ message: "Группа удалена", type: "success" });
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
   const deleteGroupWithUsers = async (groupId) => {
-    if (!window.confirm("Удалить группу вместе с пользователями? Это необратимо.")) return;
     try {
       await apiRequest(`${API_URL}/admin/groups/${groupId}/with-users`, {
         method: "DELETE",
@@ -128,14 +151,17 @@ const GroupsManager = () => {
         setSelectedGroupId(null);
         setGroupUsers([]);
       }
-      alert("Группа и пользователи удалены");
+      setToast({ message: "Группа и пользователи удалены", type: "success" });
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
   const handleExcelUpload = async () => {
-    if (!excelFile) return alert("Выберите Excel-файл");
+    if (!excelFile) {
+      return setToast({ message: "Выберите Excel-файл", type: "error" });
+    }
+
     const formData = new FormData();
     formData.append("file", excelFile);
 
@@ -151,12 +177,12 @@ const GroupsManager = () => {
         throw new Error(text);
       }
 
-      alert("Группа и пользователи успешно загружены");
+      setToast({ message: "Группа и пользователи успешно загружены", type: "success" });
       fileInputRef.current.value = null;
       setExcelFile(null);
       fetchGroups();
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
@@ -224,10 +250,16 @@ const GroupsManager = () => {
                 >
                   {selectedGroupId === group.id ? "Закрыть" : "Открыть"}
                 </button>
-                <button className="hero-btn danger" onClick={() => deleteGroupOnly(group.id)}>
+                <button
+                  className="hero-btn danger"
+                  onClick={() => confirmDeleteGroup(group.id, false)}
+                >
                   Удалить группу
                 </button>
-                <button className="hero-btn danger" onClick={() => deleteGroupWithUsers(group.id)}>
+                <button
+                  className="hero-btn danger"
+                  onClick={() => confirmDeleteGroup(group.id, true)}
+                >
                   Удалить с пользователями
                 </button>
               </div>
@@ -269,7 +301,7 @@ const GroupsManager = () => {
                             <td>{user.iin}</td>
                             <td>
                               <button
-                                onClick={() => removeUserFromGroup(user.id)}
+                                onClick={() => confirmRemoveUser(user.id)}
                                 className="hero-btn danger"
                               >
                                 Удалить

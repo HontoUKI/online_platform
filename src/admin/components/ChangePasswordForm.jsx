@@ -3,7 +3,7 @@ import { apiRequest } from "../../utils/apiRequest";
 import { handleError } from "../../utils/handleError";
 import "../assets/style.css";
 
-function ChangePasswordForm() {
+function ChangePasswordForm({ setToast }) {
   const [userIin, setUserIin] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
@@ -15,7 +15,7 @@ function ChangePasswordForm() {
     e.preventDefault();
 
     if (!token) {
-      alert("Ошибка: вы не авторизованы");
+      setToast({ message: "Ошибка: вы не авторизованы", type: "error" });
       return;
     }
 
@@ -29,11 +29,11 @@ function ChangePasswordForm() {
         token,
       });
 
-      alert("Пароль успешно обновлён");
+      setToast({ message: "Пароль успешно обновлён", type: "success" });
       setUserIin("");
       setNewPassword("");
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 

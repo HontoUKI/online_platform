@@ -9,7 +9,7 @@ import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
 import '../assets/style.css';
 
-function ModuleDetailsTeacherPage() {
+function ModuleDetailsTeacherPage({ setToast }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [module, setModule] = useState(null);
@@ -164,6 +164,7 @@ function ModuleDetailsTeacherPage() {
                 subjectId={selectedSubject}
                 onClose={closeModal}
                 onLessonAdded={handleLessonAdded}
+                setToast={setToast}
               />
             )}
           </div>

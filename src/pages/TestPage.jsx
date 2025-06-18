@@ -8,7 +8,7 @@ import { handleError } from '../utils/handleError';
 import '../assets/TestPage.css';
 import '../assets/style.css';
 
-const TestPage = () => {
+const TestPage = ({ setToast }) => {
   const { testId } = useParams();
   const navigate = useNavigate();
 
@@ -29,59 +29,70 @@ const TestPage = () => {
         const data = await apiRequest(`${API_URL}/tests/${testId}`, { token });
         if (!data.questions?.length) throw new Error('Тест не содержит вопросов.');
         if (data.result) {
-          alert('Вы уже проходили этот тест.');
-          navigate(`/lesson/${data.lesson_id}`);
+          setToast({
+            message: 'Вы уже проходили этот тест.',
+            type: 'info',
+          });
+          navigate(`/lesson/${data.lesson_id}`, { replace: true });
           return;
         }
         setTest(data);
       } catch (err) {
+        handleError(err, setToast);
         setError('Ошибка загрузки теста или доступ запрещён.');
-        handleError(err);
       } finally {
         setLoading(false);
       }
     })();
-  }, [testId]);
+  }, [testId, token, API_URL, setToast, navigate]);
 
   const handleAnswerChange = (questionId, selectedIndex) => {
     setAnswers((prev) => ({ ...prev, [questionId]: selectedIndex }));
   };
 
-  const handleSubmit = async () => {
-    if (submitting) return;
-
-    const unanswered = test.questions.filter(q => !(q.id in answers)).length;
-    if (unanswered > 0) {
-      const confirm = window.confirm(
-        `Вы не ответили на ${unanswered} вопрос(ов). Всё равно завершить?`
-      );
-      if (!confirm) return;
-    }
+  const confirmSubmit = () => {
+    const unanswered = test.questions.filter((q) => !(q.id in answers)).length;
 
     if (Object.keys(answers).length === 0) {
-      alert('Вы не выбрали ни одного ответа!');
+      setToast({ message: 'Вы не выбрали ни одного ответа!', type: 'warning' });
       return;
     }
 
+    if (unanswered > 0) {
+      setToast({
+        message: `Вы не ответили на ${unanswered} вопрос(ов). Всё равно завершить?`,
+        type: 'warning',
+        actionText: 'Завершить',
+        onAction: handleSubmit,
+      });
+    } else {
+      handleSubmit();
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (submitting) return;
     setSubmitting(true);
+
     try {
       const payload = {
         test_id: test.id,
         answers: Object.entries(answers).map(([qid, index]) => ({
           question_id: Number(qid),
-          selected_index: index
-        }))
+          selected_index: index,
+        })),
       };
 
       const result = await apiRequest(`${API_URL}/tests/submit`, {
         method: 'POST',
         data: payload,
-        token
+        token,
       });
 
-      navigate(`/lesson/${result.lesson_id}`);
+      setToast({ message: 'Тест успешно завершён!', type: 'success' });
+      navigate(`/lesson/${result.lesson_id}?score=true`);
     } catch (err) {
-      handleError(err);
+      handleError(err, setToast);
     } finally {
       setSubmitting(false);
     }
@@ -96,6 +107,7 @@ const TestPage = () => {
     <div className="app full-center">
       <main className="main-section full-center">
         <div className="test-page">
+          <Header />
           <div className="test-header">
             <div>Тестирование №{test.id}</div>
             <div>{test.title}</div>
@@ -150,7 +162,11 @@ const TestPage = () => {
                   Далее
                 </button>
               ) : (
-                <button onClick={handleSubmit} disabled={submitting} className="submit-button">
+                <button
+                  onClick={confirmSubmit}
+                  disabled={submitting}
+                  className="submit-button"
+                >
                   Завершить тест
                 </button>
               )}

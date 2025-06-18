@@ -17,13 +17,12 @@ const triggerDownload = (url) => {
   document.body.removeChild(link);
 };
 
-function LessonTeacher() {
+function LessonTeacher({ setToast }) {
   const { lessonId } = useParams();
   const location = useLocation();
   const [lessonType, setLessonType] = useState(location.state?.lessonType || null);
   const [submissions, setSubmissions] = useState([]);
   const [grades, setGrades] = useState({});
-  const [message, setMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -31,7 +30,6 @@ function LessonTeacher() {
   const session = JSON.parse(localStorage.getItem('session'));
   const token = session?.access_token;
   const isTeacher = session?.user?.role === 'teacher';
-
 
   const API_URL = import.meta.env.VITE_API_URL;
   const serverURL = import.meta.env.VITE_SERVER_URL || API_URL;
@@ -44,8 +42,6 @@ function LessonTeacher() {
       : normalized;
   };
 
-
-
   useEffect(() => {
     (async () => {
       try {
@@ -54,7 +50,7 @@ function LessonTeacher() {
         await fetchSubmissions(lesson.type);
       } catch (err) {
         setError('Урок не найден или доступ ограничен.');
-        handleError(err);
+        handleError(err, setToast);
       } finally {
         setLoading(false);
       }
@@ -80,7 +76,7 @@ function LessonTeacher() {
       }
     } catch (err) {
       setError('Не удалось загрузить отправленные работы');
-      handleError(err);
+      handleError(err, setToast);
     }
   };
 
@@ -96,33 +92,38 @@ function LessonTeacher() {
         data: { grade: Number(grade) },
         token,
       });
-      setMessage('Оценка сохранена');
+      setToast({ message: 'Оценка сохранена', type: 'success' });
     } catch (err) {
-      setMessage('Ошибка при сохранении оценки');
-      handleError(err);
+      handleError(err, setToast);
+      setToast({ message: 'Ошибка при сохранении оценки', type: 'error' });
     }
   };
 
-  const handleDeleteResult = async (resultId) => {
-    if (!window.confirm('Точно удалить результат?')) return;
+  const confirmDeleteResult = (resultId) => {
+    setToast({
+      message: 'Точно удалить результат?',
+      type: 'error',
+      actionText: 'Удалить',
+      onAction: () => handleDeleteResult(resultId),
+    });
+  };
 
+  const handleDeleteResult = async (resultId) => {
     try {
       await apiRequest(`${API_URL}/lessons/result/${resultId}`, {
         method: 'DELETE',
         token,
       });
       setSubmissions((prev) => prev.filter((s) => s.id !== resultId));
-      setMessage('Результат удалён');
+      setToast({ message: 'Результат удалён', type: 'success' });
     } catch (err) {
-      setMessage('Ошибка при удалении результата');
-      handleError(err);
+      handleError(err, setToast);
+      setToast({ message: 'Ошибка при удалении результата', type: 'error' });
     }
   };
 
   const filtered = submissions
-    .filter((s) =>
-      s.student_name?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    .filter((s) => s.student_name?.toLowerCase().includes(searchTerm.toLowerCase()))
     .sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at || 0));
 
   const averageScore = (() => {
@@ -169,8 +170,6 @@ function LessonTeacher() {
               }}
             />
 
-            {message && <p className="upload-status">{message}</p>}
-
             {filtered.length > 0 ? (
               <div className="table-wrapper">
                 <table className="table">
@@ -204,7 +203,7 @@ function LessonTeacher() {
                             <td>
                               {isTeacher && (
                                 <button
-                                  onClick={() => handleDeleteResult(s.id)}
+                                  onClick={() => confirmDeleteResult(s.id)}
                                   className="hero-btn"
                                   style={{ background: 'red', color: 'white' }}
                                 >
@@ -224,7 +223,7 @@ function LessonTeacher() {
                                   border: 'none',
                                   padding: 0,
                                   color: '#0366d6',
-                                  cursor: 'pointer'
+                                  cursor: 'pointer',
                                 }}
                               >
                                 {s.file_path.split('/').pop()}

@@ -3,11 +3,10 @@ import { apiRequest } from "../../utils/apiRequest";
 import { handleError } from "../../utils/handleError";
 import "../assets/userlist.css";
 
-function UserList() {
+function UserList({ setToast }) {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
-  const [message, setMessage] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
   const session = JSON.parse(localStorage.getItem("session"));
@@ -21,23 +20,33 @@ function UserList() {
         const data = await apiRequest(`${API_URL}/admin/users`, { token });
         setUsers(data);
       } catch (err) {
-        handleError(err, alert);
+        handleError(err, setToast);
       }
     })();
   }, []);
 
-  const handleDeleteUser = async (iin) => {
-    if (!window.confirm(`Удалить пользователя ${iin}?`)) return;
+  const requestUserDelete = (iin) => {
+    setToast({
+      message: `Удалить пользователя ${iin} со всеми данными?`,
+      type: "error",
+      actionText: "Удалить",
+      onAction: () => handleDeleteUser(iin),
+    });
+  };
 
+  const handleDeleteUser = async (iin) => {
     try {
       await apiRequest(`${API_URL}/admin/users/${iin}`, {
         method: "DELETE",
         token,
       });
       setUsers((prev) => prev.filter((u) => u.iin !== iin));
-      setMessage(`Пользователь ${iin} удалён`);
+      setToast({
+        message: `Пользователь ${iin} удалён`,
+        type: "success",
+      });
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
@@ -50,11 +59,6 @@ function UserList() {
   return (
     <div className="userlist-wrapper fade-in">
       <h2 className="userlist-title">Список пользователей</h2>
-
-      {message && (
-        <p style={{ marginBottom: "1rem", color: "#1e40af" }}>{message}</p>
-      )}
-
       <div className="userlist-filters">
         <input
           type="text"
@@ -96,7 +100,7 @@ function UserList() {
                 <td>
                   {u.role !== "admin" ? (
                     <button
-                      onClick={() => handleDeleteUser(u.iin)}
+                      onClick={() => requestUserDelete(u.iin)}
                       className="userlist-delete-btn"
                     >
                       Удалить

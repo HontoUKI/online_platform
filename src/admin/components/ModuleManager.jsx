@@ -4,7 +4,7 @@ import { handleError } from '../../utils/handleError';
 import '../../assets/style.css';
 import '../assets/modules.css';
 
-const ModulesManager = () => {
+const ModulesManager = ({ setToast }) => {
   const [modules, setModules] = useState([]);
   const [selectedModuleId, setSelectedModuleId] = useState(null);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
@@ -26,14 +26,13 @@ const ModulesManager = () => {
       const data = await apiRequest(`${API_URL}/admin/modules`, { token });
       setModules(data);
     } catch (err) {
-      handleError(err, alert);
-      alert('Ошибка загрузки модулей');
+      handleError(err, setToast);
     }
   };
 
   const createModule = async () => {
     if (!newModuleTitle.trim() || !newModuleCourse.trim()) {
-      alert('Введите все поля');
+      setToast({ message: 'Заполните обязательные поля', type: 'error' });
       return;
     }
 
@@ -47,36 +46,45 @@ const ModulesManager = () => {
         },
         token,
       });
+
       setNewModuleTitle('');
       setNewModuleDescription('');
       setNewModuleCourse('');
       setSelectedModuleId(null);
       setSelectedSubjects([]);
-      fetchModules();
-      alert('Модуль создан');
+
+      await fetchModules();
+      setToast({ message: 'Модуль создан', type: 'success' });
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
-  const deleteModule = async (id) => {
-    const confirmed = window.confirm('Удалить модуль?');
-    if (!confirmed) return;
+  const confirmDeleteModule = (id) => {
+    setToast({
+      message: 'Удалить модуль?',
+      type: 'error',
+      actionText: 'Удалить',
+      onAction: () => deleteModuleConfirmed(id),
+    });
+  };
 
+  const deleteModuleConfirmed = async (id) => {
     try {
       await apiRequest(`${API_URL}/admin/modules/${id}`, {
         method: 'DELETE',
         token,
-        silent: true,
       });
+
       if (selectedModuleId === id) {
         setSelectedModuleId(null);
         setSelectedSubjects([]);
       }
-      fetchModules();
-      alert('Модуль удалён');
+
+      await fetchModules();
+      setToast({ message: 'Модуль удалён', type: 'success' });
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
@@ -91,7 +99,9 @@ const ModulesManager = () => {
   };
 
   const addSubject = async () => {
-    if (!newSubjectTitle.trim()) return;
+    if (!newSubjectTitle.trim()) {
+      return setToast({ message: 'Введите название предмета', type: 'error' });
+    }
 
     try {
       await apiRequest(`${API_URL}/admin/modules/${selectedModuleId}/subjects`, {
@@ -99,27 +109,35 @@ const ModulesManager = () => {
         data: { title: newSubjectTitle },
         token,
       });
+
       setNewSubjectTitle('');
       await reloadSubjects();
-      alert('Предмет добавлен');
+      setToast({ message: 'Предмет добавлен', type: 'success' });
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
-  const deleteSubject = async (subjectId) => {
-    const confirmed = window.confirm('Удалить предмет?');
-    if (!confirmed) return;
+  const confirmDeleteSubject = (subjectId) => {
+    setToast({
+      message: 'Удалить предмет?',
+      type: 'error',
+      actionText: 'Удалить',
+      onAction: () => deleteSubjectConfirmed(subjectId),
+    });
+  };
 
+  const deleteSubjectConfirmed = async (subjectId) => {
     try {
       await apiRequest(`${API_URL}/admin/modules/subjects/${subjectId}`, {
         method: 'DELETE',
         token,
       });
+
       await reloadSubjects();
-      alert('Предмет удалён');
+      setToast({ message: 'Предмет удалён', type: 'success' });
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
@@ -128,7 +146,7 @@ const ModulesManager = () => {
       const updated = await apiRequest(`${API_URL}/admin/modules/${selectedModuleId}`, { token });
       setSelectedSubjects(updated.subjects || []);
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
@@ -176,7 +194,7 @@ const ModulesManager = () => {
                 <button className="hero-btn" onClick={() => toggleModule(mod)}>
                   {selectedModuleId === mod.id ? 'Закрыть' : 'Открыть'}
                 </button>
-                <button className="hero-btn danger" onClick={() => deleteModule(mod.id)}>
+                <button className="hero-btn danger" onClick={() => confirmDeleteModule(mod.id)}>
                   Удалить
                 </button>
               </div>
@@ -216,7 +234,7 @@ const ModulesManager = () => {
                             <td>
                               <button
                                 className="hero-btn danger"
-                                onClick={() => deleteSubject(subject.id)}
+                                onClick={() => confirmDeleteSubject(subject.id)}
                               >
                                 Удалить
                               </button>
@@ -224,7 +242,7 @@ const ModulesManager = () => {
                           </tr>
                         ))}
                       </tbody>
-                    </table>  
+                    </table>
                   </div>
                 )}
               </>

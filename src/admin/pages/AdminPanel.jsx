@@ -7,6 +7,7 @@ import ChangePasswordForm from "../components/ChangePasswordForm";
 import GroupManager from "../components/GroupManager";
 import AccessManager from "../components/AccessManager";
 import UserList from "../components/UserList";
+import Toast from "../../components/Toast";
 import "../assets/style.css";
 
 
@@ -23,6 +24,7 @@ const sections = [
 function AdminPanel() {
   const [activeSection, setActiveSection] = useState("users");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
   const logout = () => {
@@ -31,23 +33,23 @@ function AdminPanel() {
   };
 
   const renderSection = () => {
-    switch (activeSection) {
-      case "users":
-        return <UserForm />;
-      case "modules":
-        return <ModuleManager />;
-      case "reset":
-        return <ChangePasswordForm />;
-      case "groups":
-        return <GroupManager />;
-      case "access":
-        return <AccessManager />;
-      case "userlist":
-        return <UserList />
-      default:
-        return null;
-    }
-  };
+  switch (activeSection) {
+    case "users":
+      return <UserForm setToast={setToast} />;
+    case "modules":
+      return <ModuleManager setToast={setToast} />;
+    case "reset":
+      return <ChangePasswordForm setToast={setToast} />;
+    case "groups":
+      return <GroupManager setToast={setToast} />;
+    case "access":
+      return <AccessManager setToast={setToast} />;
+    case "userlist":
+      return <UserList setToast={setToast} />;
+    default:
+      return null;
+  }
+};
 
   useEffect(() => {
     const session = JSON.parse(localStorage.getItem("session"));
@@ -90,6 +92,16 @@ function AdminPanel() {
       <div className="admin-content-area">
         {renderSection()}
       </div>
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          actionText={toast.actionText}
+          onAction={toast.onAction}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

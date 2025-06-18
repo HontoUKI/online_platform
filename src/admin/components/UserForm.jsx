@@ -3,7 +3,7 @@ import { apiRequest } from "../../utils/apiRequest";
 import { handleError } from "../../utils/handleError";
 import "../assets/style.css";
 
-function UserForm() {
+function UserForm({ setToast }) {
   const [formData, setFormData] = useState({
     iin: "",
     full_name: "",
@@ -27,7 +27,7 @@ function UserForm() {
     e.preventDefault();
 
     if (!token) {
-      alert("Ошибка: вы не авторизованы");
+      setToast({ message: "Ошибка: вы не авторизованы", type: "error" });
       return;
     }
 
@@ -38,7 +38,8 @@ function UserForm() {
         token,
       });
 
-      alert("Пользователь успешно добавлен");
+      setToast({ message: "Пользователь успешно добавлен", type: "success" });
+
       setFormData({
         iin: "",
         full_name: "",
@@ -47,7 +48,7 @@ function UserForm() {
         password: "",
       });
     } catch (error) {
-      handleError(error, alert);
+      handleError(error, setToast);
     }
   };
 

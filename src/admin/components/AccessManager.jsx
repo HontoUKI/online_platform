@@ -3,7 +3,7 @@ import { apiRequest } from "../../utils/apiRequest";
 import { handleError } from "../../utils/handleError";
 import '../assets/access.css';
 
-const AccessManager = () => {
+const AccessManager = ({ setToast }) => {
   const [groups, setGroups] = useState([]);
   const [modules, setModules] = useState([]);
   const [accessTo, setAccessTo] = useState('group');
@@ -19,10 +19,10 @@ const AccessManager = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const session = JSON.parse(localStorage.getItem('session'));
   const token = session?.access_token;
-  
+
   useEffect(() => {
     if (!token) {
-      alert('Ошибка: вы не авторизованы');
+      setToast({ message: "Ошибка: вы не авторизованы", type: "error" });
       return;
     }
 
@@ -35,10 +35,10 @@ const AccessManager = () => {
         setGroups(groupData);
         setModules(moduleData);
       } catch (err) {
-        handleError(err, alert);
+        handleError(err, setToast);
       }
     })();
-  }, [API_URL, token]);
+  }, [API_URL, token, setToast]);
 
   const handleToggleSubject = (subjectId) => {
     setSelectedSubjects((prev) =>
@@ -47,20 +47,25 @@ const AccessManager = () => {
         : [...prev, subjectId]
     );
   };
+
   const refreshModules = async () => {
     try {
       const moduleData = await apiRequest(`${API_URL}/admin/modules/with-teachers`, { token });
       setModules(moduleData);
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
   const handleGrantAccess = async () => {
     if (!selectedModule || (accessTo === 'teacher' && !iin.trim())) {
-      alert('Пожалуйста, выберите модуль и введите ИИН преподавателя');
+      setToast({
+        message: 'Пожалуйста, выберите модуль и введите ИИН преподавателя',
+        type: 'error',
+      });
       return;
     }
+
     const endpoint =
       accessTo === 'group'
         ? `${API_URL}/access/admin/group-to-module`
@@ -83,7 +88,8 @@ const AccessManager = () => {
         token,
       });
 
-      alert('Доступ успешно предоставлен');
+      setToast({ message: 'Доступ успешно предоставлен', type: 'success' });
+
       await refreshModules();
       setSelectedSubjects([]);
       setCanAddLessons(false);
@@ -93,7 +99,7 @@ const AccessManager = () => {
       setAccessTo('group');
       setRole('student');
     } catch (err) {
-      handleError(err, alert);
+      handleError(err, setToast);
     }
   };
 
@@ -159,6 +165,7 @@ const AccessManager = () => {
               type="text"
               value={iin}
               onChange={(e) => setIin(e.target.value)}
+              maxLength={12}
               placeholder="Введите ИИН"
               className="input-text"
             />

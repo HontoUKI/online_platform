@@ -17,7 +17,7 @@ const triggerDownload = (url) => {
   document.body.removeChild(link);
 };
 
-function LessonPage() {
+function LessonPage({ setToast }) {
   const { lessonId } = useParams();
   const location = useLocation();
 
@@ -27,31 +27,30 @@ function LessonPage() {
 
   const [homeworkFiles, setHomeworkFiles] = useState([]);
   const [comment, setComment] = useState('');
-  const [uploadMessage, setUploadMessage] = useState('');
   const [submittedFiles, setSubmittedFiles] = useState([]);
 
   const fileInputRef = useRef(null);
 
-
   const session = JSON.parse(localStorage.getItem('session'));
   const token = session?.access_token;
   const API_URL = import.meta.env.VITE_API_URL;
+  const serverURL = import.meta.env.VITE_SERVER_URL || API_URL;
 
   const navigate = useNavigate();
   const role = session?.user?.role;
-
 
   useEffect(() => {
     if (role !== 'student') {
       navigate('/');
       return;
     }
+
     const fetchLesson = async () => {
       try {
         const data = await apiRequest(`${API_URL}/lessons/${lessonId}`, { token });
         setLesson(data);
       } catch (err) {
-        handleError(err);
+        handleError(err, setToast);
         setError('Урок не найден или доступ запрещён.');
       } finally {
         setLoading(false);
@@ -62,37 +61,43 @@ function LessonPage() {
       try {
         const data = await apiRequest(`${API_URL}/lessons/${lessonId}/my-submissions`, { token });
         setSubmittedFiles(data);
-      } catch (err) {
-      }
+      } catch {}
     };
 
     fetchLesson();
     fetchSubmissions();
-  }, [lessonId, token, API_URL]);
+  }, [lessonId, token, API_URL, setToast]);
+
+  const getFullPath = (path) => {
+    if (!path) return '';
+    const normalized = path.replace(/\\/g, '/').replace(/^\/+/, '');
+    return normalized.startsWith('static/')
+      ? `${serverURL}/files/download/${normalized.replace(/^static\//, '')}`
+      : normalized;
+  };
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files || []);
     const totalSize = files.reduce((sum, f) => sum + f.size, 0);
 
     if (files.length > 5) {
-      setUploadMessage('Можно прикрепить не более 5 файлов');
+      setToast({ message: 'Можно прикрепить не более 5 файлов', type: 'error' });
       setHomeworkFiles([]);
       return;
     }
 
     if (totalSize > 20 * 1024 * 1024) {
-      setUploadMessage('Общий размер файлов не должен превышать 20 МБ');
+      setToast({ message: 'Общий размер файлов не должен превышать 20 МБ', type: 'error' });
       setHomeworkFiles([]);
       return;
     }
 
-    setUploadMessage('');
     setHomeworkFiles(files);
   };
 
   const handleHomeworkSubmit = async () => {
-    if (homeworkFiles.length === 0 && !comment) {
-      setUploadMessage('Добавьте хотя бы файл или комментарий');
+    if (homeworkFiles.length === 0 && !comment.trim()) {
+      setToast({ message: 'Добавьте хотя бы файл или комментарий', type: 'info' });
       return;
     }
 
@@ -110,22 +115,29 @@ function LessonPage() {
       if (!res.ok) throw new Error('Ошибка при отправке');
       await res.json();
 
-      setUploadMessage('Задание успешно отправлено!');
+      setToast({ message: 'Задание успешно отправлено!', type: 'success' });
       setHomeworkFiles([]);
       setComment('');
       fileInputRef.current.value = null;
+
       const updated = await apiRequest(`${API_URL}/lessons/${lessonId}/my-submissions`, { token });
       setSubmittedFiles(updated);
     } catch (err) {
-      handleError(err);
-      setUploadMessage('Не удалось отправить');
+      handleError(err, setToast);
+      setToast({ message: 'Не удалось отправить', type: 'error' });
     }
   };
 
-  const handleDeleteSubmission = async (submissionId) => {
-    const confirmed = window.confirm('Удалить отправленную работу?');
-    if (!confirmed) return;
+  const confirmDeleteSubmission = (submissionId) => {
+    setToast({
+      message: 'Удалить отправленную работу?',
+      type: 'error',
+      actionText: 'Удалить',
+      onAction: () => deleteSubmissionConfirmed(submissionId),
+    });
+  };
 
+  const deleteSubmissionConfirmed = async (submissionId) => {
     try {
       await apiRequest(`${API_URL}/lessons/submission/${submissionId}`, {
         method: 'DELETE',
@@ -134,25 +146,12 @@ function LessonPage() {
       });
 
       setSubmittedFiles((prev) => prev.filter((f) => f.id !== submissionId));
-      setUploadMessage('Задание удалено');
+      setToast({ message: 'Задание удалено', type: 'success' });
     } catch (err) {
-      handleError(err);
-      setUploadMessage('Не удалось удалить задание');
+      handleError(err, setToast);
+      setToast({ message: 'Не удалось удалить задание', type: 'error' });
     }
   };
-
-  const serverURL = import.meta.env.VITE_SERVER_URL || API_URL;
-  const getFullPath = (path) => {
-      if (!path) return '';
-      const normalized = path.replace(/\\/g, '/').replace(/^\/+/, '');
-      return normalized.startsWith('static/')
-        ? `${serverURL}/files/download/${normalized.replace(/^static\//, '')}`
-        : normalized;
-    };
-
-
-
-
 
   if (loading) return <LoadingFallback message="Загружаем урок..." />;
   if (error || !lesson) return <ErrorFallback message={error || 'Ошибка загрузки урока'} />;
@@ -192,9 +191,7 @@ function LessonPage() {
                   </Link>
                 ) : (
                   <>
-                    {lesson.description && (
-                      <p className="lesson-description">{lesson.description}</p>
-                    )}
+                    {lesson.description && <p className="lesson-description">{lesson.description}</p>}
                     <p style={{ color: 'crimson' }}>Ссылка на тест недоступна</p>
                   </>
                 )
@@ -234,7 +231,6 @@ function LessonPage() {
                     >
                       Отправить
                     </button>
-                    {uploadMessage && <p className="upload-status">{uploadMessage}</p>}
                   </div>
 
                   {submittedFiles.length > 0 && (
@@ -246,18 +242,26 @@ function LessonPage() {
                             <button
                               onClick={() => triggerDownload(getFullPath(f.file_path))}
                               className="link-button"
-                              style={{ background: 'none', border: 'none', padding: 0, color: '#0366d6', cursor: 'pointer' }}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                padding: 0,
+                                color: '#0366d6',
+                                cursor: 'pointer',
+                              }}
                             >
                               {f.file_path.split('/').pop()}
                             </button>
-                            {f.comment && <em style={{ marginLeft: '0.5vw' }}>— {f.comment}</em>}
+                            {f.comment && (
+                              <em style={{ marginLeft: '0.5vw' }}>— {f.comment}</em>
+                            )}
                             {f.grade && (
                               <span style={{ marginLeft: '1vw', color: 'green' }}>
                                 Оценка: {f.grade}
                               </span>
                             )}
                             <button
-                              onClick={() => handleDeleteSubmission(f.id)}
+                              onClick={() => confirmDeleteSubmission(f.id)}
                               style={{
                                 marginLeft: '1vw',
                                 color: 'crimson',
@@ -278,9 +282,9 @@ function LessonPage() {
             </div>
 
             <div className="lesson-footer">
-                <Link to={"/module"} className="back-button">
-                  Назад
-                </Link>
+              <Link to="/module" className="back-button">
+                Назад
+              </Link>
             </div>
           </div>
         </div>

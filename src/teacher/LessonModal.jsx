@@ -4,7 +4,7 @@ import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
 import '../assets/modal.css';
 
-const LessonModal = ({ subjectId, onClose, onLessonAdded }) => {
+const LessonModal = ({ subjectId, onClose, onLessonAdded, setToast }) => {
   const [title, setTitle] = useState('');
   const [type, setType] = useState('Лекция');
   const [description, setDescription] = useState('');
@@ -16,75 +16,65 @@ const LessonModal = ({ subjectId, onClose, onLessonAdded }) => {
   const [testConflict, setTestConflict] = useState(false);
   const [availableTests, setAvailableTests] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
-  const [error, setError] = useState('');
 
   const navigate = useNavigate();
-  const session = JSON.parse(localStorage.getItem('session'));
-  const token = session?.access_token;
+  const token = JSON.parse(localStorage.getItem('session'))?.access_token;
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (type === 'Тест') {
-      (async () => {
-        try {
-          const data = await apiRequest(`${API_URL}/tests/by-subject/${subjectId}`, { token });
-          setAvailableTests(data);
-        } catch {
-          setAvailableTests([]);
-        }
-      })();
-    }
-  }, [type, subjectId, token, API_URL]);
-  
-  useEffect(() => {
-  const handleFocus = () => {
-    if (type === 'Тест') {
       apiRequest(`${API_URL}/tests/by-subject/${subjectId}`, { token })
-        .then((data) => setAvailableTests(data))
+        .then(setAvailableTests)
         .catch(() => setAvailableTests([]));
     }
-  };
-
-  window.addEventListener('focus', handleFocus);
-  return () => window.removeEventListener('focus', handleFocus);
-}, [type, subjectId, token, API_URL]);
-
+  }, [type, subjectId, token, API_URL]);
 
   useEffect(() => {
-    if (testId) {
-      const test = availableTests.find((t) => String(t.id) === String(testId));
-      setSelectedTest(test || null);
-      setTestConflict(test?.lesson_id !== null);
-    } else {
-      setSelectedTest(null);
-      setTestConflict(false);
-    }
+    const handleFocus = () => {
+      if (type === 'Тест') {
+        apiRequest(`${API_URL}/tests/by-subject/${subjectId}`, { token })
+          .then(setAvailableTests)
+          .catch(() => setAvailableTests([]));
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [type, subjectId, token, API_URL]);
+
+  useEffect(() => {
+    const test = availableTests.find((t) => String(t.id) === String(testId));
+    setSelectedTest(test || null);
+    setTestConflict(test?.lesson_id !== null);
   }, [testId, availableTests]);
 
   const handleAddLesson = async () => {
-    setError('');
-
     try {
-      let uploadedUrl = contentUrl;
-
-      if (useUpload && uploadFile?.size > 10 * 1024 * 1024) {
-        setError('Файл превышает допустимый размер (макс. 10 МБ)');
+      if (!title.trim()) {
+        setToast({ message: 'Введите название урока', type: 'warning' });
         return;
       }
+
+      if (useUpload && uploadFile?.size > 10 * 1024 * 1024) {
+        setToast({ message: 'Файл превышает 10 МБ', type: 'error' });
+        return;
+      }
+
+      let uploadedUrl = contentUrl;
 
       if (type !== 'Тест' && useUpload && uploadFile) {
         const formData = new FormData();
         formData.append('file', uploadFile);
 
-        const uploadRes = await fetch(`${API_URL}/lessons/upload/lesson-file`, {
+        const res = await fetch(`${API_URL}/lessons/upload/lesson-file`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: formData,
         });
 
-        if (!uploadRes.ok) throw new Error('Ошибка загрузки файла');
-        const uploadData = await uploadRes.json();
-        uploadedUrl = uploadData.url;
+        if (!res.ok) throw new Error('Ошибка загрузки файла');
+        const data = await res.json();
+        uploadedUrl = data.url;
       }
 
       const payload = {
@@ -101,21 +91,21 @@ const LessonModal = ({ subjectId, onClose, onLessonAdded }) => {
         token,
       });
 
+      setToast({ message: 'Урок успешно добавлен', type: 'success' });
       onLessonAdded();
       onClose();
     } catch (err) {
-        if (err?.response?.status === 409) {
-          setError(err.response.data.detail || 'Тест уже используется в другом уроке');
-        } else {
-          handleError(err, setError);
-        }
+      if (err?.response?.status === 409) {
+        setToast({ message: err.response.data.detail || 'Тест уже связан с другим уроком', type: 'warning' });
+      } else {
+        handleError(err, setToast);
+      }
     }
   };
 
   const handleOpenTestEditor = () => {
-    if (testId) {
-      navigate(`/test/edit/${testId}`);
-    }};
+    if (testId) navigate(`/test/edit/${testId}`);
+  };
 
   return (
     <div className="modal-overlay">
@@ -161,19 +151,12 @@ const LessonModal = ({ subjectId, onClose, onLessonAdded }) => {
               </p>
             )}
 
-            {testId ? (
-              <button className="add-lesson-btn" onClick={handleOpenTestEditor}>
-                Редактировать тест
-              </button>
-            ) : (
-              <button
-                className="add-lesson-btn"
-                onClick={() => {navigate(`/test/create`);
-                }}
-              >
-                + Новый тест
-              </button>
-            )}
+            <button
+              className="add-lesson-btn"
+              onClick={testId ? handleOpenTestEditor : () => navigate('/test/create', { state: { subjectId } })}
+            >
+              {testId ? 'Редактировать тест' : '+ Новый тест'}
+            </button>
           </>
         ) : (
           <>
@@ -206,8 +189,6 @@ const LessonModal = ({ subjectId, onClose, onLessonAdded }) => {
             )}
           </>
         )}
-
-        {error && <p className="error-message">{error}</p>}
 
         <button className="add-lesson-btn" onClick={handleAddLesson}>
           Добавить урок

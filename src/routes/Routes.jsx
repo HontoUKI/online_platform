@@ -1,4 +1,3 @@
-// src/routes/Routes.jsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import PrivateRoute from '../utils/PrivateRoute';
@@ -16,23 +15,29 @@ import LessonTeacher from '../teacher/LessonTeacher';
 import StudentGrades from '../pages/StudentGrades';
 import NotFound from '../pages/NotFound';
 
-const AppRoutes = () => {
+const AppRoutes = ({ setToast }) => {
+  const withAuth = (Component) => (
+    <PrivateRoute setToast={setToast}>
+      <Component setToast={setToast} />
+    </PrivateRoute>
+  );
+
   return (
     <Routes>
       <Route path="/" element={<LoginPage />} />
-      <Route path="/user" element={<PrivateRoute><PersonalAccountPage /></PrivateRoute>} />
-      <Route path="/module" element={<PrivateRoute><ModulesPage /></PrivateRoute>} />
-      <Route path="/module/:id" element={<PrivateRoute><ModuleDetailsPage /></PrivateRoute>} />
-      <Route path="/teacher/module" element={<PrivateRoute><ModulesTeacherPage /></PrivateRoute>} />
-      <Route path="/teacher/module/:id" element={<PrivateRoute><ModuleDetailsTeacherPage /></PrivateRoute>} />
-      <Route path="/lesson/:lessonId" element={<PrivateRoute><LessonPage /></PrivateRoute>} />
-      <Route path='/teacher/lesson/:lessonId' element={<PrivateRoute><LessonTeacher /></PrivateRoute>} />
-      <Route path='/test/create' element={<PrivateRoute><TestCreatePage/></PrivateRoute>} />
-      <Route path="/test/edit/:testId" element={<PrivateRoute><TestCreatePage /></PrivateRoute>} /> 
-      <Route path="/test/:testId" element={<PrivateRoute><TestPage /></PrivateRoute>} />
-      <Route path='/grades' element={<PrivateRoute><StudentGrades /></PrivateRoute>} />
-      <Route path='/admin' element={<PrivateRoute><AdminPanel /></PrivateRoute>}/>
-      <Route path='*' element={<NotFound />} />
+      <Route path="/user" element={withAuth(PersonalAccountPage)} />
+      <Route path="/module" element={withAuth(ModulesPage)} />
+      <Route path="/module/:id" element={withAuth(ModuleDetailsPage)} />
+      <Route path="/teacher/module" element={withAuth(ModulesTeacherPage)} />
+      <Route path="/teacher/module/:id" element={withAuth(ModuleDetailsTeacherPage)} />
+      <Route path="/lesson/:lessonId" element={withAuth(LessonPage)} />
+      <Route path="/teacher/lesson/:lessonId" element={withAuth(LessonTeacher)} />
+      <Route path="/test/create" element={withAuth(TestCreatePage)} />
+      <Route path="/test/edit/:testId" element={withAuth(TestCreatePage)} />
+      <Route path="/test/:testId" element={withAuth(TestPage)} />
+      <Route path="/grades" element={withAuth(StudentGrades)} />
+      <Route path="/admin" element={withAuth(AdminPanel)} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

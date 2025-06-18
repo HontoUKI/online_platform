@@ -5,19 +5,18 @@ import { handleError } from '../utils/handleError';
 import { apiRequest } from '../utils/apiRequest';
 import '../assets/TestPage.css';
 
-function TestCreatePage() {
+function TestCreatePage({ setToast }) {
   const { testId } = useParams();
   const navigate = useNavigate();
   const isEditMode = !!testId;
   const location = useLocation();
 
-  const searchParams = new URLSearchParams(location.search);
-  const subjectId = Number(searchParams.get('subject'));
+  const subjectId = location.state?.subjectId;
   const fallbackSubjectId = 1;
 
   const [title, setTitle] = useState('');
   const [questions, setQuestions] = useState([]);
-  const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const session = JSON.parse(localStorage.getItem('session'));
   const token = session?.access_token;
@@ -49,11 +48,11 @@ function TestCreatePage() {
           }))
         );
       } catch (err) {
-        handleError(err);
+        handleError(err, setToast);
         navigate(-1);
       }
     })();
-  }, [isEditMode, testId, token, API_URL, navigate]);
+  }, [isEditMode, testId, token, API_URL, navigate, setToast]);
 
   const addQuestion = () => {
     setQuestions((prev) => [
@@ -96,6 +95,8 @@ function TestCreatePage() {
   };
 
   const handleSubmit = async () => {
+    if (submitting) return;
+
     const cleanQuestions = questions.filter(
       (q) => q.question.trim() && q.options.some((o) => o.trim())
     );
@@ -121,19 +122,24 @@ function TestCreatePage() {
     const method = isEditMode ? 'PUT' : 'POST';
 
     try {
+      setSubmitting(true);
+
       await apiRequest(endpoint, { method, data: payload, token });
-      setMessage(isEditMode ? 'Тест обновлён!' : 'Тест создан!');
-      setTimeout(() => navigate(-1), 1000);
+
+      setToast({
+        message: isEditMode ? 'Тест успешно обновлён' : 'Тест создан',
+        type: 'success',
+        onClose: () => navigate(-1), // редирект после уведомления
+      });
     } catch (err) {
-      handleError(err, setMessage);
+      handleError(err, setToast);
+      setSubmitting(false); // снимаем блокировку в случае ошибки
     }
   };
 
   return (
     <div className="test-page editor">
       <h2>{isEditMode ? 'Редактирование теста' : 'Создание теста'}</h2>
-
-      {message && <p className="upload-status">{message}</p>}
 
       <input
         type="text"
@@ -158,30 +164,31 @@ function TestCreatePage() {
                 value={opt}
                 onChange={(e) => handleOptionChange(i, j, e.target.value)}
               />
-              <input
-                type="radio"
-                name={`correct-${i}`}
-                checked={q.correct_option === j}
-                onChange={() =>
-                  handleQuestionChange(i, 'correct_option', j)
-                }
-              />
-              <label>Верный</label>
-              <button
-                onClick={() => deleteOption(i, j)}
-                title="Удалить вариант"
-              >
-                X
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1rem' }}>
+                <input
+                  type="radio"
+                  name={`correct-${i}`}
+                  checked={q.correct_option === j}
+                  onChange={() => handleQuestionChange(i, 'correct_option', j)}
+                />
+                <label>Верный</label>
+                <button onClick={() => deleteOption(i, j)} title="Удалить вариант">X</button>
+              </div>
             </div>
           ))}
-          <button onClick={() => addOptionToQuestion(i)}>+ Добавить вариант</button>
-          <button onClick={() => deleteQuestion(i)}>Удалить вопрос</button>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button onClick={() => addOptionToQuestion(i)}>+ Добавить вариант</button>
+            <button onClick={() => deleteQuestion(i)}>Удалить вопрос</button>
+          </div>
         </div>
       ))}
 
-      <button onClick={addQuestion}>+ Добавить вопрос</button>
-      <button onClick={handleSubmit}>Сохранить тест</button>
+      <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+        <button onClick={addQuestion}>+ Добавить вопрос</button>
+        <button onClick={handleSubmit} disabled={submitting}>
+          {submitting ? 'Сохраняем...' : 'Сохранить тест'}
+        </button>
+      </div>
     </div>
   );
 }

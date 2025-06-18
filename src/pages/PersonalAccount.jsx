@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../sections/Header';
 import LoadingFallback from '../components/LoadingFallback';
 import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
 import '../assets/PersonalAccountPage.css';
 
-function PersonalAccountPage() {
+function PersonalAccountPage({ setToast }) {
   const [user, setUser] = useState(null);
   const [phone, setPhone] = useState('');
-  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const [photoFile, setPhotoFile] = useState(null);
@@ -20,6 +19,7 @@ function PersonalAccountPage() {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL;
+  const token = JSON.parse(localStorage.getItem('session'))?.access_token;
 
   useEffect(() => {
     const session = JSON.parse(localStorage.getItem('session'));
@@ -51,14 +51,11 @@ function PersonalAccountPage() {
     }
   };
 
-  const token = JSON.parse(localStorage.getItem('session'))?.access_token;
-
   const handlePhoneChange = (e) => setPhone(e.target.value);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
     try {
       const data = await apiRequest(`${API_URL}/user/update-phone`, {
         method: 'POST',
@@ -66,9 +63,9 @@ function PersonalAccountPage() {
         token,
       });
       updateSessionUser(data.user);
-      setMessage('Номер телефона успешно обновлён');
+      setToast({ message: 'Номер телефона успешно обновлён', type: 'success' });
     } catch (err) {
-      handleError(err, setMessage);
+      handleError(err, setToast);
     } finally {
       setLoading(false);
     }
@@ -84,7 +81,6 @@ function PersonalAccountPage() {
   const uploadPhoto = async () => {
     if (!photoFile) return;
     setLoading(true);
-    setMessage('');
     try {
       const formData = new FormData();
       formData.append('photo', photoFile);
@@ -99,9 +95,9 @@ function PersonalAccountPage() {
       const data = await res.json();
       updateSessionUser(data.user);
       setPhotoFile(null);
-      setMessage('Фото успешно обновлено');
+      setToast({ message: 'Фото успешно обновлено', type: 'success' });
     } catch (err) {
-      handleError(err, setMessage);
+      handleError(err, setToast);
     } finally {
       setLoading(false);
     }
@@ -110,11 +106,10 @@ function PersonalAccountPage() {
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     if (newPass1 !== newPass2) {
-      setMessage('Новые пароли не совпадают');
+      setToast({ message: 'Новые пароли не совпадают', type: 'error' });
       return;
     }
     setLoading(true);
-    setMessage('');
     try {
       await apiRequest(`${API_URL}/user/change-password`, {
         method: 'PATCH',
@@ -128,9 +123,9 @@ function PersonalAccountPage() {
       setNewPass1('');
       setNewPass2('');
       setShowPasswordForm(false);
-      setMessage('Пароль успешно изменён');
+      setToast({ message: 'Пароль успешно изменён', type: 'success' });
     } catch (err) {
-      handleError(err, setMessage);
+      handleError(err, setToast);
     } finally {
       setLoading(false);
     }
@@ -224,8 +219,6 @@ function PersonalAccountPage() {
               </button>
             </form>
           )}
-
-          {message && <p className="message">{message}</p>}
         </div>
       </div>
     </div>
