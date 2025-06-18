@@ -168,9 +168,7 @@ const LessonModal = ({ subjectId, onClose, onLessonAdded }) => {
             ) : (
               <button
                 className="add-lesson-btn"
-                onClick={() => {
-                  window.open(url, '_blank');
-                  setTimeout(() => navigate(`/test/create`), 100);
+                onClick={() => {navigate(`/test/create`);
                 }}
               >
                 + Новый тест
