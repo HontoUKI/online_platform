@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import withSessionGuard from '../utils/withSessionGuard';
 import { handleError } from '../utils/handleError';
 import { apiRequest } from '../utils/apiRequest';
@@ -139,8 +139,12 @@ function TestCreatePage({ setToast }) {
 
   return (
     <div className="test-page editor">
-      <h2>{isEditMode ? 'Редактирование теста' : 'Создание теста'}</h2>
-
+      <div style={{ width:'100%', marginBottom: '2rem', flexDirection: 'row', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <h2>{isEditMode ? 'Редактирование теста' : 'Создание теста'}</h2>
+        <Link to="/teacher/module" className="back-button">
+          ← Назад к модулям
+        </Link>
+      </div>
       <input
         type="text"
         placeholder="Название теста"
