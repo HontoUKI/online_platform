@@ -177,7 +177,10 @@ function LessonPage({ setToast }) {
                 Дата добавления: {new Date(lesson.created_at).toLocaleDateString()}
               </p>
             )}
-
+            <div>
+              <p><strong>Описание урока</strong></p>
+              <span>{lesson.description}</span>
+            </div>
             <div className="lesson-view">
               {lesson.type === 'Тест' ? (
                 lesson.result ? (
