@@ -65,20 +65,32 @@ function ModuleDetailsTeacherPage({ setToast }) {
     fetchModule();
   };
 
-  const handleDeleteLesson = async (lessonId) => {
-    const confirmed = window.confirm('Вы уверены, что хотите удалить урок и все вложенные файлы?');
-    if (!confirmed) return;
-
-    try {
-      await apiRequest(`${API_URL}/lessons/${lessonId}`, {
-        method: 'DELETE',
-        token,
-        silent: true,
-      });
-      await fetchModule();
-    } catch (err) {
-      handleError(err);
-    }
+  const requestDeleteLesson = (lessonId, lessonTitle) => {
+    setToast({
+      message: `Удалить урок "${lessonTitle}" и все вложенные файлы?`,
+      type: "error",
+      actionText: "Удалить",
+      onAction: async () => {
+        try {
+          await apiRequest(`${API_URL}/lessons/${lessonId}`, {
+            method: 'DELETE',
+            token,
+            silent: true,
+          });
+          await fetchModule();
+          setToast({
+            message: 'Урок успешно удалён.',
+            type: 'success',
+          });
+        } catch (err) {
+          handleError(err);
+          setToast({
+            message: 'Не удалось удалить урок.',
+            type: 'error',
+          });
+        }
+      },
+    });
   };
 
   if (loading) return <LoadingFallback message="Подгружаем модуль..." />;
@@ -144,7 +156,7 @@ function ModuleDetailsTeacherPage({ setToast }) {
                             {!isAdmin && (
                               <button
                                 className="delete-lesson-btn"
-                                onClick={() => handleDeleteLesson(lesson.id)}
+                                onClick={() => requestDeleteLesson(lesson.id, lesson.title)}
                                 title="Удалить урок"
                               >
                                 Удалить
