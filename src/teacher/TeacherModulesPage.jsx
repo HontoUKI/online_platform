@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import withSessionGuard from '../utils/withSessionGuard';
 import { handleError } from '../utils/handleError';
 import { apiRequest } from '../utils/apiRequest';
+import { getSession } from '../utils/session';
 import Header from '../sections/Header';
 import LoadingFallback from '../components/LoadingFallback';
 import ErrorFallback from '../components/ErrorFallback';
@@ -14,7 +15,7 @@ function ModulesTeacherPage() {
   const [loading, setLoading] = useState(true);
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const session = JSON.parse(localStorage.getItem('session'));
+  const session = getSession();
   const token = session?.access_token;
   const role = session?.user?.role;
 

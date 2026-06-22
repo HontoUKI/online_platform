@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
+import { getToken, clearSession } from '../utils/session';
 
 const PrivateRoute = ({ children, setToast }) => {
   const [auth, setAuth] = useState({ checked: false, valid: false });
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    const session = JSON.parse(localStorage.getItem('session'));
-    const token = session?.access_token;
+    const token = getToken();
 
     if (!token) {
       setAuth({ checked: true, valid: false });
@@ -21,7 +21,7 @@ const PrivateRoute = ({ children, setToast }) => {
         await apiRequest(`${API_URL}/auth/check`, { token });
         setAuth({ checked: true, valid: true });
       } catch (err) {
-        localStorage.removeItem('session');
+        clearSession();
         handleError(err, setToast);
         setAuth({ checked: true, valid: false });
       }

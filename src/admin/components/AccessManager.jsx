@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiRequest } from "../../utils/apiRequest";
 import { handleError } from "../../utils/handleError";
+import { getToken } from "../../utils/session";
 import '../assets/access.css';
 
 const AccessManager = ({ setToast }) => {
@@ -17,8 +18,7 @@ const AccessManager = ({ setToast }) => {
   const [moduleSearch, setModuleSearch] = useState('');
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const session = JSON.parse(localStorage.getItem('session'));
-  const token = session?.access_token;
+  const token = getToken();
 
   useEffect(() => {
     if (!token) {

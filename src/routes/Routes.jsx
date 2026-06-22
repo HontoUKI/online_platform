@@ -16,9 +16,9 @@ import StudentGrades from '../pages/StudentGrades';
 import NotFound from '../pages/NotFound';
 
 const AppRoutes = ({ setToast }) => {
-  const withAuth = (Component) => (
+  const withAuth = (RouteComponent) => (
     <PrivateRoute setToast={setToast}>
-      <Component setToast={setToast} />
+      {React.createElement(RouteComponent, { setToast })}
     </PrivateRoute>
   );
 

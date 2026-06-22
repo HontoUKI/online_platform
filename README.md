@@ -1,12 +1,115 @@
-# React + Vite
+# Online Platform Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for an educational online platform built with React and Vite.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- authentication and protected routes;
+- student personal account;
+- module and lesson pages;
+- tests and grades;
+- teacher lesson/module management;
+- admin panels for users, groups, modules and access control;
+- configurable API URL through environment variables.
 
-## Expanding the ESLint configuration
+## Tech stack
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React
+- Vite
+- React Router
+- Axios / Fetch API
+- ESLint
+
+## Project structure
+
+```text
+src/
+  admin/       Admin panel components and pages
+  assets/      Shared styles
+  components/  Reusable UI components
+  pages/       Student-facing pages
+  routes/      Application routes
+  sections/    Landing/header sections
+  teacher/     Teacher-facing pages and modals
+  utils/       apiRequest, session and error helpers
+```
+
+All HTTP calls go through `utils/apiRequest.js` (JSON and multipart), and the auth session is
+read/written only through `utils/session.js`. Colors, spacing and radii live in
+`assets/tokens.css`; common layout/spacing classes are in `assets/utilities.css`.
+
+## Documentation
+
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — project shape and conventions.
+- [docs/REQUESTS.md](docs/REQUESTS.md) — request bodies the frontend sends, per endpoint.
+
+## Environment variables
+
+Create a local `.env` file from the example:
+
+```bash
+cp .env.example .env
+```
+
+Example values:
+
+```env
+VITE_API_URL=http://localhost:8000
+VITE_SERVER_URL=http://localhost:8000
+VITE_ALLOWED_HOSTS=online-platform-t3xm.onrender.com,do.vtgk.kz
+VITE_SUPPORT_ENABLED=true
+VITE_SUPPORT_PHONE=+7 (700) 000-00-00
+```
+
+Do not commit the real `.env` file. Only `.env.example` should be stored in Git.
+
+## Installation
+
+```bash
+npm install
+```
+
+## Development
+
+```bash
+npm run dev
+```
+
+## Production build
+
+```bash
+npm run build
+```
+
+## Preview production build
+
+```bash
+npm run preview
+```
+
+## Checks
+
+```bash
+npm run lint
+npm audit
+npm run build
+```
+
+At the time of publication preparation, the project builds successfully and `npm audit` reports no known vulnerabilities after dependency lockfile update.
+
+## Publication notes
+
+Before making the repository public, check that local-only files are not tracked:
+
+```bash
+git ls-files | findstr ".env"
+git ls-files | findstr "node_modules"
+git ls-files | findstr "dist"
+```
+
+Expected safe result for environment files:
+
+```text
+.env.example
+```
+

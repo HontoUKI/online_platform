@@ -1,0 +1,51 @@
+/*
+ * Небольшой набор утилит для замены повторяющихся inline-стилей
+ * (flex-раскладки, типовые отступы, цвета статусов). Подключается глобально.
+ * Динамические стили (вычисляемые цвета, задержки анимации) остаются inline —
+ * это корректный паттерн React.
+ */
+
+/* Раскладка */
+.u-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-3);
+}
+.u-row-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+.u-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.u-row-between {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.u-full-width { width: 100%; }
+.u-grow { flex-grow: 1; }
+
+/* Отступы */
+.u-mt-1 { margin-top: var(--space-3); }
+.u-mt-2 { margin-top: var(--space-5); }
+.u-mb-1 { margin-bottom: var(--space-3); }
+.u-mb-2 { margin-bottom: var(--space-5); }
+.u-mt-auto { margin-top: auto; }
+
+/* Задержки для каскадного появления (.fade-in) */
+.u-delay-1 { animation-delay: 0.2s; }
+.u-delay-2 { animation-delay: 0.4s; }
+.u-delay-3 { animation-delay: 0.6s; }
+
+/* Текст статусов */
+.u-text-error { color: crimson; }
+.u-text-success { color: var(--color-success-text); }
+.u-text-muted { color: var(--color-text-muted); }
+.u-text-bold { font-weight: bold; }

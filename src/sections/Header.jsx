@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import LoginModal from '../components/LoginModal';
 import Menu from '../components/Menu';
+import { getSession, updateSession } from '../utils/session';
 import '../assets/style.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -12,8 +13,7 @@ const Header = () => {
 
 useEffect(() => {
   const loadSession = () => {
-    const session = JSON.parse(localStorage.getItem('session'));
-    const savedUser = session?.user;
+    const savedUser = getSession()?.user;
 
     if (savedUser) {
       setUser(savedUser);
@@ -43,9 +43,7 @@ useEffect(() => {
 
 
   const handleLogin = (user) => {
-    const session = JSON.parse(localStorage.getItem('session')) || {};
-    const newSession = { ...session, user };
-    localStorage.setItem('session', JSON.stringify(newSession));
+    updateSession({ user });
 
     window.dispatchEvent(new Event('session-updated'));
 

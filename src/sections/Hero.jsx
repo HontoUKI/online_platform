@@ -11,9 +11,9 @@ const Hero = () => {
   return (
     <section className="hero full-center">
       <h2 className="fade-in">Изучи</h2>
-      <h1 className="fade-in" style={{ animationDelay: '0.2s' }}>Новую специальность</h1>
-      <h3 className="fade-in" style={{ animationDelay: '0.4s' }}>Дистанционно с нами</h3>
-      <button className="fade-in hero-btn" style={{ animationDelay: '0.6s'}} onClick={openModal}>
+      <h1 className="fade-in u-delay-1">Новую специальность</h1>
+      <h3 className="fade-in u-delay-2">Дистанционно с нами</h3>
+      <button className="fade-in hero-btn u-delay-3" onClick={openModal}>
         Войти
       </button>
 

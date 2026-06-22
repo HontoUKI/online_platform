@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { apiRequest } from "../../utils/apiRequest";
 import { handleError } from "../../utils/handleError";
+import { getToken } from "../../utils/session";
 import "../../assets/style.css";
 import "../assets/group_style.css";
 
@@ -16,8 +17,7 @@ const GroupsManager = ({ setToast }) => {
 
   const fileInputRef = useRef(null);
   const API_URL = import.meta.env.VITE_API_URL;
-  const session = JSON.parse(localStorage.getItem("session"));
-  const token = session?.access_token;
+  const token = getToken();
 
   useEffect(() => {
     fetchGroups();
@@ -166,16 +166,11 @@ const GroupsManager = ({ setToast }) => {
     formData.append("file", excelFile);
 
     try {
-      const res = await fetch(`${API_URL}/admin/groups/upload-excel`, {
+      await apiRequest(`${API_URL}/admin/groups/upload-excel`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
+        data: formData,
+        token,
       });
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
-      }
 
       setToast({ message: "Группа и пользователи успешно загружены", type: "success" });
       fileInputRef.current.value = null;
@@ -267,7 +262,7 @@ const GroupsManager = ({ setToast }) => {
 
             {selectedGroupId === group.id && (
               <>
-                <div className="user-add-container" style={{ marginTop: "1rem" }}>
+                <div className="user-add-container u-mt-1">
                   <input
                     className="input"
                     placeholder="ИИН пользователя"
@@ -281,12 +276,12 @@ const GroupsManager = ({ setToast }) => {
                 </div>
 
                 {groupUsers.length === 0 ? (
-                  <p className="no-users-text" style={{ marginTop: "1rem" }}>
+                  <p className="no-users-text u-mt-1">
                     Нет пользователей в группе
                   </p>
                 ) : (
                   <div className="table-wrapper">
-                    <table className="table" style={{ marginTop: "1rem" }}>
+                    <table className="table u-mt-1">
                       <thead>
                         <tr>
                           <th>ФИО</th>

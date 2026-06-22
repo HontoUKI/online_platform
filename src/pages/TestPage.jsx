@@ -5,6 +5,7 @@ import LoadingFallback from '../components/LoadingFallback';
 import ErrorFallback from '../components/ErrorFallback';
 import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
+import { getToken } from '../utils/session';
 import '../assets/TestPage.css';
 import '../assets/style.css';
 
@@ -20,8 +21,7 @@ const TestPage = ({ setToast }) => {
   const [error, setError] = useState('');
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const session = JSON.parse(localStorage.getItem('session'));
-  const token = session?.access_token;
+  const token = getToken();
 
   useEffect(() => {
     (async () => {

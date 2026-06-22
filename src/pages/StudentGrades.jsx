@@ -5,7 +5,9 @@ import LoadingFallback from '../components/LoadingFallback';
 import ErrorFallback from '../components/ErrorFallback';
 import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
+import { getToken } from '../utils/session';
 import '../assets/style.css';
+import '../assets/StudentGrades.css';
 
 function StudentGrades() {
   const [grades, setGrades] = useState([]);
@@ -17,8 +19,7 @@ function StudentGrades() {
   const [error, setError] = useState('');
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const session = JSON.parse(localStorage.getItem('session'));
-  const token = session?.access_token;
+  const token = getToken();
 
   const toggleSubject = (subject) => {
     setCollapsedSubjects((prev) => ({
@@ -66,28 +67,18 @@ function StudentGrades() {
           <div className="content fade-in">
             <h1>Мои оценки</h1>
 
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+            <div className="u-row-wrap u-mb-1">
               <input
                 type="text"
                 placeholder="Поиск по названию урока..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  flex: 1,
-                  padding: '0.5rem',
-                  borderRadius: '8px',
-                  border: '1px solid #ccc',
-                  minWidth: '250px',
-                }}
+                className="grades-search"
               />
               <select
                 value={lessonType}
                 onChange={(e) => setLessonType(e.target.value)}
-                style={{
-                  padding: '0.5rem',
-                  borderRadius: '8px',
-                  border: '1px solid #ccc',
-                }}
+                className="grades-select"
               >
                 <option value="all">Все типы</option>
                 <option value="тест">Тест</option>
@@ -103,15 +94,10 @@ function StudentGrades() {
                   return acc;
                 }, {})
               ).map(([subject, lessons]) => (
-                <div key={subject} style={{ marginBottom: '2rem', width: '100%' }}>
+                <div key={subject} className="u-mb-2 u-full-width">
                   <h3
                     onClick={() => toggleSubject(subject)}
-                    style={{
-                      marginTop: '1rem',
-                      color: '#0046a0',
-                      cursor: 'pointer',
-                      userSelect: 'none',
-                    }}
+                    className="grades-subject-toggle"
                   >
                     {collapsedSubjects[subject] ? '+' : '-'} {subject}
                   </h3>
@@ -145,11 +131,7 @@ function StudentGrades() {
                               <td>
                                 <Link
                                   to={`/lesson/${g.lesson_id}`}
-                                  className="hero-btn"
-                                  style={{
-                                    padding: '0.3rem 0.8rem',
-                                    width: '100%',
-                                  }}
+                                  className="hero-btn grades-go-link"
                                 >
                                   Перейти
                                 </Link>

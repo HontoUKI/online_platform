@@ -6,6 +6,7 @@ import LoadingFallback from '../components/LoadingFallback';
 import ErrorFallback from '../components/ErrorFallback';
 import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
+import { getSession } from '../utils/session';
 import '../assets/style.css';
 
 const triggerDownload = (url) => {
@@ -31,7 +32,7 @@ function LessonPage({ setToast }) {
 
   const fileInputRef = useRef(null);
 
-  const session = JSON.parse(localStorage.getItem('session'));
+  const session = getSession();
   const token = session?.access_token;
   const API_URL = import.meta.env.VITE_API_URL;
   const serverURL = import.meta.env.VITE_SERVER_URL || API_URL;
@@ -61,7 +62,9 @@ function LessonPage({ setToast }) {
       try {
         const data = await apiRequest(`${API_URL}/lessons/${lessonId}/my-submissions`, { token });
         setSubmittedFiles(data);
-      } catch {}
+      } catch {
+        setSubmittedFiles([]);
+      }
     };
 
     fetchLesson();
@@ -106,14 +109,11 @@ function LessonPage({ setToast }) {
     if (comment) formData.append('comment', comment);
 
     try {
-      const res = await fetch(`${API_URL}/lessons/${lessonId}/submit-homework`, {
+      await apiRequest(`${API_URL}/lessons/${lessonId}/submit-homework`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
+        data: formData,
+        token,
       });
-
-      if (!res.ok) throw new Error('Ошибка при отправке');
-      await res.json();
 
       setToast({ message: 'Задание успешно отправлено!', type: 'success' });
       setHomeworkFiles([]);
@@ -195,11 +195,11 @@ function LessonPage({ setToast }) {
                 ) : (
                   <>
                     {lesson.description && <p className="lesson-description">{lesson.description}</p>}
-                    <p style={{ color: 'crimson' }}>Ссылка на тест недоступна</p>
+                    <p className="u-text-error">Ссылка на тест недоступна</p>
                   </>
                 )
               ) : lesson.has_access === false ? (
-                <p style={{ color: 'crimson' }}>Материал недоступен для вашего аккаунта</p>
+                <p className="u-text-error">Материал недоступен для вашего аккаунта</p>
               ) : (
                 <>
                   {lesson.content_url ? (
@@ -214,7 +214,7 @@ function LessonPage({ setToast }) {
                   ) : lesson.description ? (
                     <p className="lesson-description">{lesson.description}</p>
                   ) : (
-                    <p style={{ color: 'crimson' }}>Материал не прикреплён</p>
+                    <p className="u-text-error">Материал не прикреплён</p>
                   )}
 
                   <div className="homework-submit-box">
@@ -224,7 +224,7 @@ function LessonPage({ setToast }) {
                       placeholder="Комментарий преподавателю (необязательно)"
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
-                      style={{ width: '100%', marginBottom: '1vw', padding: '0.5vw' }}
+                      className="homework-comment"
                     />
                     <input type="file" multiple onChange={handleFileChange} ref={fileInputRef} />
                     <button
@@ -244,34 +244,21 @@ function LessonPage({ setToast }) {
                           <li key={f.id}>
                             <button
                               onClick={() => triggerDownload(getFullPath(f.file_path))}
-                              className="link-button"
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                padding: 0,
-                                color: '#0366d6',
-                                cursor: 'pointer',
-                              }}
+                              className="file-link-button"
                             >
                               {f.file_path.split('/').pop()}
                             </button>
                             {f.comment && (
-                              <em style={{ marginLeft: '0.5vw' }}>— {f.comment}</em>
+                              <em className="submission-comment">— {f.comment}</em>
                             )}
                             {f.grade && (
-                              <span style={{ marginLeft: '1vw', color: 'green' }}>
+                              <span className="submission-grade">
                                 Оценка: {f.grade}
                               </span>
                             )}
                             <button
                               onClick={() => confirmDeleteSubmission(f.id)}
-                              style={{
-                                marginLeft: '1vw',
-                                color: 'crimson',
-                                border: 'none',
-                                background: 'none',
-                                cursor: 'pointer',
-                              }}
+                              className="submission-delete"
                             >
                               Удалить
                             </button>

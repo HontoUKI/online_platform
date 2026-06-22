@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { apiRequest } from "../../utils/apiRequest";
 import { handleError } from "../../utils/handleError";
+import { getToken } from "../../utils/session";
 import "../assets/userlist.css";
 
 function UserList({ setToast }) {
@@ -9,8 +10,7 @@ function UserList({ setToast }) {
   const [roleFilter, setRoleFilter] = useState("all");
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const session = JSON.parse(localStorage.getItem("session"));
-  const token = session?.access_token;
+  const token = getToken();
 
   useEffect(() => {
     if (!token) return;

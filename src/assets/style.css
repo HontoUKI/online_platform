@@ -653,6 +653,44 @@ input[type="password"] {
   text-decoration: none;
   color: #000000;
 }
+/* Поиск по студентам на странице проверки заданий */
+.teacher-search {
+  padding: 0.6rem;
+  margin-bottom: var(--space-3);
+  font-size: 1rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+}
+/* Кнопка, оформленная как ссылка (например, ссылка на файл студента) */
+.file-link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #0366d6;
+  cursor: pointer;
+}
+
+/* Блок отправки и списка домашних заданий */
+.homework-comment {
+  width: 100%;
+  margin-bottom: 1vw;
+  padding: 0.5vw;
+}
+.submission-comment {
+  margin-left: 0.5vw;
+}
+.submission-grade {
+  margin-left: 1vw;
+  color: green;
+}
+.submission-delete {
+  margin-left: 1vw;
+  color: crimson;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
 .lesson-view{
   margin-top: 10px;
   margin-bottom: 15px;

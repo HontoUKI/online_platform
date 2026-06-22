@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { apiRequest } from "../../utils/apiRequest";
 import { handleError } from "../../utils/handleError";
+import { getToken } from "../../utils/session";
 import "../assets/style.css";
 
 function UserForm({ setToast }) {
@@ -13,8 +14,7 @@ function UserForm({ setToast }) {
   });
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const session = JSON.parse(localStorage.getItem("session"));
-  const token = session?.access_token;
+  const token = getToken();
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -56,11 +56,7 @@ function UserForm({ setToast }) {
     <div className="groups-manager-container fade-in">
       <h2>Добавление пользователя</h2>
 
-      <form
-        onSubmit={handleSubmit}
-        className="user-add-container"
-        style={{ flexDirection: "column", gap: "1rem" }}
-      >
+      <form onSubmit={handleSubmit} className="u-col">
         <input
           className="input"
           name="iin"

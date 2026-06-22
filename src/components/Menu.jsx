@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { getSession, clearSession } from '../utils/session';
 
 const Menu = () => {
   const navigate = useNavigate();
@@ -7,7 +8,7 @@ const Menu = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const logout = () => {
-    localStorage.removeItem('session');
+    clearSession();
     navigate('/');
   };
 
@@ -17,8 +18,7 @@ const Menu = () => {
   };
 
   useEffect(() => {
-    const session = JSON.parse(localStorage.getItem('session'));
-    const user = session?.user;
+    const user = getSession()?.user;
     if (user?.role) {
       setRole(user.role);
     }

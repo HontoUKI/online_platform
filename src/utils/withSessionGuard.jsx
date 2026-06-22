@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingFallback from '../components/LoadingFallback';
+import { isSessionValid, clearSession } from './session';
 
-const withSessionGuard = (Component) => {
+const withSessionGuard = (GuardedPage) => {
   return function GuardedComponent(props) {
     const navigate = useNavigate();
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
-      const session = JSON.parse(localStorage.getItem('session'));
-      if (!session || Date.now() > session.expires_at) {
-        localStorage.removeItem('session');
+      if (!isSessionValid()) {
+        clearSession();
         navigate('/');
       } else {
         setReady(true);
       }
     }, [navigate]);
 
-    return ready ? <Component {...props} /> : <LoadingFallback message="Проверка сессии..." />;
+    return ready ? React.createElement(GuardedPage, props) : <LoadingFallback message="Проверка сессии..." />;
   };
 };
 

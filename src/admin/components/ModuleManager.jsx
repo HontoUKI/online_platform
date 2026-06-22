@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiRequest } from '../../utils/apiRequest';
 import { handleError } from '../../utils/handleError';
+import { getToken } from '../../utils/session';
 import '../../assets/style.css';
 import '../assets/modules.css';
 
@@ -14,8 +15,7 @@ const ModulesManager = ({ setToast }) => {
   const [newSubjectTitle, setNewSubjectTitle] = useState('');
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const session = JSON.parse(localStorage.getItem('session'));
-  const token = session?.access_token;
+  const token = getToken();
 
   useEffect(() => {
     fetchModules();
@@ -185,12 +185,12 @@ const ModulesManager = ({ setToast }) => {
         {filteredModules.map((mod) => (
           <div key={mod.id} className="group-card">
             <div className="group-card-header">
-              <h4 style={{ marginBottom: '0.4rem' }}>{mod.title}</h4>
+              <h4 className="module-card-title">{mod.title}</h4>
               <p className="group-description">{mod.description || 'Без описания'}</p>
-              <p style={{ fontSize: '0.85rem', color: '#555', marginTop: '0.4rem' }}>
+              <p className="module-card-course">
                 Курс: {mod.course}
               </p>
-              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem' }}>
+              <div className="module-card-actions">
                 <button className="hero-btn" onClick={() => toggleModule(mod)}>
                   {selectedModuleId === mod.id ? 'Закрыть' : 'Открыть'}
                 </button>
@@ -202,7 +202,7 @@ const ModulesManager = ({ setToast }) => {
 
             {selectedModuleId === mod.id && (
               <>
-                <div className="user-add-container" style={{ marginTop: '1rem' }}>
+                <div className="user-add-container u-mt-1">
                   <input
                     className="input"
                     placeholder="Новый предмет"
@@ -215,12 +215,12 @@ const ModulesManager = ({ setToast }) => {
                 </div>
 
                 {selectedSubjects.length === 0 ? (
-                  <p className="no-users-text" style={{ marginTop: '1rem' }}>
+                  <p className="no-users-text u-mt-1">
                     В модуле пока нет предметов
                   </p>
                 ) : (
                   <div className="table-wrapper">
-                    <table className="table" style={{ marginTop: '1rem' }}>
+                    <table className="table u-mt-1">
                       <thead>
                         <tr>
                           <th>Название</th>

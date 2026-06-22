@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
+import { getToken } from '../utils/session';
 import '../assets/modal.css';
 
 const LessonModal = ({ subjectId, onClose, onLessonAdded, setToast }) => {
@@ -15,10 +16,9 @@ const LessonModal = ({ subjectId, onClose, onLessonAdded, setToast }) => {
   const [testId, setTestId] = useState('');
   const [testConflict, setTestConflict] = useState(false);
   const [availableTests, setAvailableTests] = useState([]);
-  const [selectedTest, setSelectedTest] = useState(null);
 
   const navigate = useNavigate();
-  const token = JSON.parse(localStorage.getItem('session'))?.access_token;
+  const token = getToken();
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -44,8 +44,7 @@ const LessonModal = ({ subjectId, onClose, onLessonAdded, setToast }) => {
 
   useEffect(() => {
     const test = availableTests.find((t) => String(t.id) === String(testId));
-    setSelectedTest(test || null);
-    setTestConflict(test?.lesson_id !== null);
+    setTestConflict(Boolean(test?.lesson_id));
   }, [testId, availableTests]);
 
   const handleAddLesson = async () => {
@@ -66,14 +65,11 @@ const LessonModal = ({ subjectId, onClose, onLessonAdded, setToast }) => {
         const formData = new FormData();
         formData.append('file', uploadFile);
 
-        const res = await fetch(`${API_URL}/lessons/upload/lesson-file`, {
+        const data = await apiRequest(`${API_URL}/lessons/upload/lesson-file`, {
           method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-          body: formData,
+          data: formData,
+          token,
         });
-
-        if (!res.ok) throw new Error('Ошибка загрузки файла');
-        const data = await res.json();
         uploadedUrl = data.url;
       }
 

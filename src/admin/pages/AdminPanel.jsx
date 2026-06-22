@@ -8,6 +8,7 @@ import GroupManager from "../components/GroupManager";
 import AccessManager from "../components/AccessManager";
 import UserList from "../components/UserList";
 import Toast from "../../components/Toast";
+import { getSession, clearSession } from "../../utils/session";
 import "../assets/style.css";
 
 
@@ -28,7 +29,7 @@ function AdminPanel() {
   const navigate = useNavigate();
 
   const logout = () => {
-    localStorage.removeItem("session");
+    clearSession();
     navigate("/");
   };
 
@@ -52,7 +53,7 @@ function AdminPanel() {
 };
 
   useEffect(() => {
-    const session = JSON.parse(localStorage.getItem("session"));
+    const session = getSession();
     if (!session?.user || session.user.role !== "admin") {
       navigate("/");
     }
@@ -83,7 +84,7 @@ function AdminPanel() {
           </button>
         ))}
 
-        <div className="bottom-buttons" style={{ marginTop: "auto" }}>
+        <div className="bottom-buttons u-mt-auto">
           <Link to="/user" className="logout-button">Вернуться</Link>
           <button onClick={logout} className="logout-button">Выход</button>
         </div>

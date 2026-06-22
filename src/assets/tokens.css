@@ -1,0 +1,45 @@
+/*
+ * Дизайн-токены проекта: единый источник цветов, отступов и радиусов.
+ * Значения собраны из фактически использовавшихся в CSS величин, чтобы
+ * перевод компонентов на var(--…) не менял внешний вид.
+ */
+:root {
+  /* Бренд / синие оттенки */
+  --color-primary: #0046a0;
+  --color-primary-dark: #004080;
+  --color-primary-hover: #0051c9;
+  --color-accent: #0077ff;
+  --color-primary-soft: #e5e9ff;
+
+  /* Нейтральные */
+  --color-text: #333333;
+  --color-text-muted: #666666;
+  --color-bg: #ffffff;
+  --color-bg-soft: #f9f9f9;
+  --color-border: #cccccc;
+  --color-border-light: #dddddd;
+
+  /* Статусы */
+  --color-error: #dc2626;
+  --color-error-strong: #ff0000;
+  --color-success: #38a169;
+  --color-success-text: green;
+  --color-danger-bg: red;
+
+  /* Тени */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+  /* Радиусы */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 50%;
+
+  /* Отступы (шаг 0.25rem) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2rem;
+}

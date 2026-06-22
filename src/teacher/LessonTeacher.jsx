@@ -6,6 +6,7 @@ import ErrorFallback from '../components/ErrorFallback';
 import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
 import withSessionGuard from '../utils/withSessionGuard';
+import { getSession } from '../utils/session';
 import '../assets/style.css';
 
 const triggerDownload = (url) => {
@@ -27,7 +28,7 @@ function LessonTeacher({ setToast }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const session = JSON.parse(localStorage.getItem('session'));
+  const session = getSession();
   const token = session?.access_token;
   const isTeacher = session?.user?.role === 'teacher';
 
@@ -150,7 +151,7 @@ function LessonTeacher({ setToast }) {
             <h1>Проверка заданий</h1>
 
             {averageScore !== null && (
-              <div style={{ fontWeight: 'bold', marginBottom: '1rem' }}>
+              <div className="u-text-bold u-mb-1">
                 Средний балл: {averageScore}
               </div>
             )}
@@ -160,14 +161,7 @@ function LessonTeacher({ setToast }) {
               placeholder="Поиск по ФИО студента..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                padding: '0.6rem',
-                marginBottom: '1rem',
-                fontSize: '1rem',
-                width: '100%',
-                borderRadius: '0.5rem',
-                border: '1px solid #ccc',
-              }}
+              className="teacher-search"
             />
 
             {filtered.length > 0 ? (
@@ -204,8 +198,7 @@ function LessonTeacher({ setToast }) {
                               {isTeacher && (
                                 <button
                                   onClick={() => confirmDeleteResult(s.id)}
-                                  className="hero-btn"
-                                  style={{ background: 'red', color: 'white' }}
+                                  className="hero-btn danger"
                                 >
                                   Удалить
                                 </button>
@@ -217,14 +210,7 @@ function LessonTeacher({ setToast }) {
                             <td>
                               <button
                                 onClick={() => triggerDownload(getFullPath(s.file_path))}
-                                className="lesson-link"
-                                style={{
-                                  background: 'none',
-                                  border: 'none',
-                                  padding: 0,
-                                  color: '#0366d6',
-                                  cursor: 'pointer',
-                                }}
+                                className="file-link-button"
                               >
                                 {s.file_path.split('/').pop()}
                               </button>
@@ -256,7 +242,7 @@ function LessonTeacher({ setToast }) {
               <p>Пока нет отправленных работ.</p>
             )}
 
-            <div style={{ marginTop: '2rem' }}>
+            <div className="u-mt-2">
               <Link to={-1} className="back-button">
                 ← Назад к уроку
               </Link>

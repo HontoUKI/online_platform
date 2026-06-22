@@ -1,17 +1,19 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import dotenv from 'dotenv';
+import process from 'node:process';
 
-dotenv.config(); // Загрузим .env в process.env
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), 'VITE_');
 
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    historyApiFallback: true,
-  },
-  preview: {
-    host: '0.0.0.0',
-    port: 10000,
-    allowedHosts: process.env.VITE_ALLOWED_HOSTS?.split(',') || [],
-  },
+  return {
+    plugins: [react()],
+    server: {
+      historyApiFallback: true,
+    },
+    preview: {
+      host: '0.0.0.0',
+      port: 10000,
+      allowedHosts: env.VITE_ALLOWED_HOSTS?.split(',').filter(Boolean) || [],
+    },
+  };
 });

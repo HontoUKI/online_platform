@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Header from '../sections/Header';
 import LessonModal from './LessonModal';
 import LoadingFallback from '../components/LoadingFallback';
@@ -7,18 +7,18 @@ import ErrorFallback from '../components/ErrorFallback';
 import withSessionGuard from '../utils/withSessionGuard';
 import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
+import { getSession } from '../utils/session';
 import '../assets/style.css';
 
 function ModuleDetailsTeacherPage({ setToast }) {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [module, setModule] = useState(null);
   const [openedDisciplines, setOpenedDisciplines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
 
-  const session = JSON.parse(localStorage.getItem('session'));
+  const session = getSession();
   const token = session?.access_token;
   const role = session?.user?.role;
   const isAdmin = role === 'admin';

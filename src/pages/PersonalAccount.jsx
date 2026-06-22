@@ -3,6 +3,7 @@ import Header from '../sections/Header';
 import LoadingFallback from '../components/LoadingFallback';
 import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
+import { getSession, getToken, updateSession } from '../utils/session';
 import '../assets/PersonalAccountPage.css';
 
 function PersonalAccountPage({ setToast }) {
@@ -19,11 +20,10 @@ function PersonalAccountPage({ setToast }) {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const token = JSON.parse(localStorage.getItem('session'))?.access_token;
+  const token = getToken();
 
   useEffect(() => {
-    const session = JSON.parse(localStorage.getItem('session'));
-    const userData = session?.user;
+    const userData = getSession()?.user;
     if (userData) {
       setUser(userData);
       setPhone(userData.phone || '');
@@ -37,8 +37,7 @@ function PersonalAccountPage({ setToast }) {
   }, []);
 
   const updateSessionUser = (newUser) => {
-    const session = JSON.parse(localStorage.getItem('session'));
-    localStorage.setItem('session', JSON.stringify({ ...session, user: newUser }));
+    updateSession({ user: newUser });
     window.dispatchEvent(new Event('session-updated'));
 
     setUser(newUser);
@@ -85,14 +84,11 @@ function PersonalAccountPage({ setToast }) {
       const formData = new FormData();
       formData.append('photo', photoFile);
 
-      const res = await fetch(`${API_URL}/user/upload-photo`, {
+      const data = await apiRequest(`${API_URL}/user/upload-photo`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
+        data: formData,
+        token,
       });
-
-      if (!res.ok) throw new Error('Ошибка загрузки фото');
-      const data = await res.json();
       updateSessionUser(data.user);
       setPhotoFile(null);
       setToast({ message: 'Фото успешно обновлено', type: 'success' });
@@ -178,8 +174,7 @@ function PersonalAccountPage({ setToast }) {
 
           {!showPasswordForm && (
             <button
-              className="hero-btn"
-              style={{ marginTop: '1rem', width: '100%' }}
+              className="hero-btn u-mt-1 u-full-width"
               onClick={() => setShowPasswordForm(true)}
             >
               Редактировать пароль

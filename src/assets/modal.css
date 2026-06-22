@@ -182,6 +182,16 @@
   font-size: clamp(0.8rem, 1vw, 1rem);
 }
 
+/* Чекбокс «Не выходить» */
+.modal-remember {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.modal-remember-text {
+  font-size: clamp(1rem, 4.2vw, 1.25rem);
+}
+
 /* Анимация появления */
 @keyframes fadeIn {
   from {

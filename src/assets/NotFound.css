@@ -1,0 +1,15 @@
+/* Стили страницы 404 */
+.not-found {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+.not-found__code {
+  font-size: 4rem;
+  margin-bottom: var(--space-3);
+}
+.not-found__text {
+  font-size: 1.5rem;
+}
+.not-found__link {
+  margin-top: var(--space-3);
+}

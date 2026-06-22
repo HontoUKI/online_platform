@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import withSessionGuard from '../utils/withSessionGuard';
 import { handleError } from '../utils/handleError';
 import { apiRequest } from '../utils/apiRequest';
+import { getToken } from '../utils/session';
 import '../assets/TestPage.css';
 
 function TestCreatePage({ setToast }) {
@@ -18,8 +19,7 @@ function TestCreatePage({ setToast }) {
   const [questions, setQuestions] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
-  const session = JSON.parse(localStorage.getItem('session'));
-  const token = session?.access_token;
+  const token = getToken();
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -139,7 +139,7 @@ function TestCreatePage({ setToast }) {
 
   return (
     <div className="test-page editor">
-      <div style={{ width:'100%', marginBottom: '2rem', flexDirection: 'row', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+      <div className="u-row-between u-full-width u-mb-2">
         <h2>{isEditMode ? 'Редактирование теста' : 'Создание теста'}</h2>
         <Link to="/teacher/module" className="back-button">
           ← Назад к модулям
@@ -168,7 +168,7 @@ function TestCreatePage({ setToast }) {
                 value={opt}
                 onChange={(e) => handleOptionChange(i, j, e.target.value)}
               />
-              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1rem' }}>
+              <div className="u-row">
                 <input
                   type="radio"
                   name={`correct-${i}`}
@@ -180,14 +180,14 @@ function TestCreatePage({ setToast }) {
               </div>
             </div>
           ))}
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div className="u-row">
             <button onClick={() => addOptionToQuestion(i)}>+ Добавить вариант</button>
             <button onClick={() => deleteQuestion(i)}>Удалить вопрос</button>
           </div>
         </div>
       ))}
 
-      <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+      <div className="u-row u-mt-2">
         <button onClick={addQuestion}>+ Добавить вопрос</button>
         <button onClick={handleSubmit} disabled={submitting}>
           {submitting ? 'Сохраняем...' : 'Сохранить тест'}

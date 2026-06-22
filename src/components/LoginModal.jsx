@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Toast from './Toast';
+import { apiRequest } from '../utils/apiRequest';
+import { setSession } from '../utils/session';
 import '../assets/modal.css';
 
 const SUPPORT_ENABLED = import.meta.env.VITE_SUPPORT_ENABLED === 'true';
@@ -23,35 +25,28 @@ const LoginModal = ({ onClose }) => {
     setError('');
 
     try {
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const resData = await apiRequest(`${API_URL}/auth/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ iin, password }),
+        data: { iin, password },
       });
-
-      const resData = await response.json();
-
-      if (!response.ok) {
-        setError(resData.detail || 'Ошибка авторизации');
-        return;
-      }
 
       const expiresInDays = rememberMe ? 30 : 3;
       const expirationDate = Date.now() + expiresInDays * 24 * 60 * 60 * 1000;
 
-      localStorage.setItem(
-        'session',
-        JSON.stringify({
-          access_token: resData.access_token,
-          user: resData.user,
-          expires_at: expirationDate,
-        })
-      );
+      setSession({
+        access_token: resData.access_token,
+        user: resData.user,
+        expires_at: expirationDate,
+      });
 
       onClose();
       navigate('/user');
     } catch (err) {
-      setError('Ошибка соединения. Попробуйте позже.');
+      if (err.message === 'Failed to fetch') {
+        setError('Ошибка соединения. Попробуйте позже.');
+      } else {
+        setError(err.response?.data?.detail || 'Ошибка авторизации');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -90,14 +85,14 @@ const LoginModal = ({ onClose }) => {
         </div>
 
         <div className="extra-options modal-row">
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <label className="modal-remember">
             <input
               type="checkbox"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
               disabled={isSubmitting}
             />
-            <span style={{ fontSize: 'clamp(1rem, 4.2vw, 1.25rem)' }}>
+            <span className="modal-remember-text">
               Не выходить
             </span>
           </label>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { apiRequest } from "../../utils/apiRequest";
 import { handleError } from "../../utils/handleError";
+import { getToken } from "../../utils/session";
 import "../assets/style.css";
 
 function ChangePasswordForm({ setToast }) {
@@ -8,8 +9,7 @@ function ChangePasswordForm({ setToast }) {
   const [newPassword, setNewPassword] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const session = JSON.parse(localStorage.getItem("session"));
-  const token = session?.access_token;
+  const token = getToken();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,11 +41,7 @@ function ChangePasswordForm({ setToast }) {
     <div className="groups-manager-container fade-in">
       <h2>Сброс пароля пользователя</h2>
 
-      <form
-        onSubmit={handleSubmit}
-        className="user-add-container"
-        style={{ flexDirection: "column", gap: "1rem" }}
-      >
+      <form onSubmit={handleSubmit} className="u-col">
         <input
           className="input"
           type="text"
