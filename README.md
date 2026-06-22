@@ -87,15 +87,29 @@ npm run build
 npm run preview
 ```
 
+## Tests
+
+Unit tests for the utilities (`apiRequest`, `session`, `handleError`) run with Vitest:
+
+```bash
+npm run test
+```
+
+Test files live next to the code in `src/utils/__tests__/`.
+
 ## Checks
 
 ```bash
 npm run lint
-npm audit
+npm run test
 npm run build
+npm audit
 ```
 
-At the time of publication preparation, the project builds successfully and `npm audit` reports no known vulnerabilities after dependency lockfile update.
+## CI
+
+`.github/workflows/ci.yml` runs on every push to `main` and on pull requests: `npm ci`, then
+lint, unit tests and a production build on Node 20.
 
 ## Publication notes
 

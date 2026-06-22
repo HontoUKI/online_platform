@@ -15,5 +15,10 @@ export default defineConfig(({ mode }) => {
       port: 10000,
       allowedHosts: env.VITE_ALLOWED_HOSTS?.split(',').filter(Boolean) || [],
     },
+    // Конфигурация Vitest (юнит-тесты утилит в src/utils).
+    test: {
+      environment: 'jsdom',
+      globals: true,
+    },
   };
 });

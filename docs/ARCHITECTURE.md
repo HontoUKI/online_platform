@@ -16,6 +16,7 @@ src/
   sections/    Header and landing Hero
   routes/      Route table
   utils/       apiRequest, session, error handling, route guards
+               (unit tests in utils/__tests__/)
   assets/      tokens.css, utilities.css and per-area stylesheets
 ```
 
