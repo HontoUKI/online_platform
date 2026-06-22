@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { apiRequest } from '../apiRequest';
 
 function mockFetch(response) {
-  global.fetch = vi.fn().mockResolvedValue(response);
+  globalThis.fetch = vi.fn().mockResolvedValue(response);
 }
 
 afterEach(() => {
@@ -16,7 +16,7 @@ describe('apiRequest', () => {
     const result = await apiRequest('/x', { method: 'POST', data: { a: 1 }, token: 't' });
 
     expect(result).toEqual({ id: 1 });
-    const [, config] = global.fetch.mock.calls[0];
+    const [, config] = globalThis.fetch.mock.calls[0];
     expect(config.headers['Content-Type']).toBe('application/json');
     expect(config.headers.Authorization).toBe('Bearer t');
     expect(config.body).toBe(JSON.stringify({ a: 1 }));
@@ -29,7 +29,7 @@ describe('apiRequest', () => {
 
     await apiRequest('/upload', { method: 'POST', data: fd, token: 't' });
 
-    const [, config] = global.fetch.mock.calls[0];
+    const [, config] = globalThis.fetch.mock.calls[0];
     expect(config.headers['Content-Type']).toBeUndefined();
     expect(config.body).toBe(fd);
   });
