@@ -39,6 +39,9 @@ src/
 - **Route protection.** [utils/PrivateRoute.jsx](../src/utils/PrivateRoute.jsx) validates the
   token against the API; [utils/withSessionGuard.jsx](../src/utils/withSessionGuard.jsx) gates
   pages on a valid local session.
+- **File downloads.** `/files/download` requires a JWT, so files are fetched with the token via
+  [utils/fileDownload.js](../src/utils/fileDownload.js) (`downloadFile`, `openFile`) and served
+  from a blob URL — not via plain `<a href>` (which cannot send the auth header).
 - **Styling.** Plain CSS. Design tokens (colors/spacing/radii) are CSS variables in
   `assets/tokens.css`; repeated layout/spacing patterns are utility classes in
   `assets/utilities.css`. Component-specific rules live in their own stylesheet. Inline styles

@@ -31,7 +31,7 @@ src/
   routes/      Application routes
   sections/    Landing/header sections
   teacher/     Teacher-facing pages and modals
-  utils/       apiRequest, session and error helpers
+  utils/       apiRequest, session, file download and error helpers
 ```
 
 All HTTP calls go through `utils/apiRequest.js` (JSON and multipart), and the auth session is
