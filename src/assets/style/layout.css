@@ -1,0 +1,30 @@
+/* === Главный блок === */
+.main-section {
+  width: 100%;
+  max-width: 90vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: calc(100vh - 8vh);
+}
+
+.hero h1 {
+  font-size: clamp(1.75rem, 5vw, 2.75rem); /* ≈28–44px */
+  font-weight: bold;
+  color: #0051c9;
+}
+
+.hero h2 {
+  font-size: clamp(1.4rem, 4.2vw, 2rem); /* ≈22–32px */
+  color: #0051c9;
+}
+
+.hero h3 {
+  font-size: clamp(1.2rem, 3.6vw, 1.6rem); /* ≈19–26px */
+  color: #0051c9;
+  margin-bottom: 1rem;
+}
+
+
+

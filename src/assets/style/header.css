@@ -1,0 +1,59 @@
+/* === Хедер и меню === */
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+  background-color: #ccc;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.header {
+  position: fixed;
+  top: 15px;
+  z-index: 1001;
+  width: 100%;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.login-btn,
+.hero-btn,
+.search-button,
+.module-footer .start-module-btn,
+.lesson-link-button,
+.back-button {
+  text-align: center;
+  font-size: clamp(0.875rem, 2vw, 1.125rem); /* от ~14px до ~18px */
+  padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 4vw, 2rem);
+  background: none;
+  color: #333333;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.hero-btn,
+.search-button,
+.module-footer .start-module-btn,
+.back-button,
+.lesson-link-button {
+  background: linear-gradient(to right, #004799, #0077FF);
+  color: white;
+  transition: background 0.3s ease;
+}
+
+.hero-btn:hover,
+.search-button:hover,
+.module-footer .start-module-btn:hover,
+.lesson-link-button:hover,
+.back-button:hover {
+  background: #333333;
+  color: white;
+}
+
+

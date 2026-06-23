@@ -23,7 +23,7 @@ src/
   routes/      Route table
   utils/       apiRequest, session, error handling, route guards
                (unit tests in utils/__tests__/)
-  assets/      tokens.css, utilities.css and per-area stylesheets
+  assets/      tokens.css, utilities.css; style.css barrels style/*.css by area
 ```
 
 ## Conventions
@@ -54,8 +54,9 @@ The backend route reference lives in the API repo at `docs/API.md`.
 - **CSS rule duplication — resolved.** The admin sidebar no longer reuses the global `Menu`
   component's class names: its selectors are namespaced as `.admin-menu-*`, so
   `assets/style.css` and `admin/assets/style.css` no longer collide, and the duplicated
-  `.menu-close`/`.menu-title` blocks in `assets/style.css` were merged. `assets/style.css` is
-  still large and could be split per area later.
+  `.menu-close`/`.menu-title` blocks were merged. `assets/style.css` is now a thin barrel of
+  `@import`s split by area under `assets/style/` (base, header, layout, menu, pages, modules,
+  lessons, tables); import order preserves the original cascade.
 - **Token refresh.** The app stores an access token with a local `expires_at` and redirects to
   login on expiry; there is no refresh flow.
 - **Typed API layer.** Request/response shapes are documented but not type-checked; a typed

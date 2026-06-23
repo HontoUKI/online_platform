@@ -1,0 +1,67 @@
+/* Адаптивность*/
+@media (max-width: 768px) {
+  .modules-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 768px) {
+  .module-content-flex {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  .module-item-container {
+    flex: 1 1 calc(50% - 1rem); /* 2 на строку */
+  }
+}
+
+
+/* Обёртка для скролла на мобильных */
+.table-wrapper {
+  width: screen;
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Таблица */
+.table-wrapper {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+
+/* Ячейки */
+.table th,
+.table td {
+  border: 1px solid #eee;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  background-color: #f9f9f9;
+  white-space: nowrap; /* предотвращаем перенос строк */
+}
+
+/* Заголовки */
+.table thead th {
+  background-color: #f3f3f3;
+  font-weight: bold;
+}
+
+/* Строки */
+.table tbody tr {
+  height: auto;
+}
+@media (max-width: 480px) {
+  .table {
+    font-size: 0.8rem;
+    white-space: normal; /* разрешаем перенос текста */
+  }
+
+  .table th, .table td {
+    padding: 0.4rem;
+  }
+}

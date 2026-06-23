@@ -1,0 +1,43 @@
+/* === Контейнеры и страницы === */
+.page-container {
+  max-width: 100%;
+  min-width: 60%;
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin: clamp(1rem, 2vw, 2rem);
+  padding: clamp(1rem, 2vw, 2rem);
+}
+@media (max-width: 768px) {
+  .page-container {
+    width: 95%;
+  }
+}
+
+.content {
+  width: 100%;
+  gap: clamp(0.8rem, 1vw, 1.2rem);
+  flex: 1;
+  padding: clamp(1rem, 2vw, 2rem) clamp(2rem, 4vw, 4rem);
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.content h1 {
+  margin-bottom: 10px;
+  text-align: start;
+  font-size: 2rem;
+  color: #0051c9;
+}
+
+.main-content-container {
+  flex-grow: 1;
+  margin-left: clamp(1rem, 2vw, 2rem);
+  background-color: white;
+  padding: clamp(1rem, 2vw, 2rem);
+  border-radius: clamp(6px, 1vw, 12px);
+  box-shadow: 0 clamp(2px, 0.4vw, 6px) clamp(6px, 0.8vw, 12px) rgba(0, 0, 0, 0.1);
+}
+

@@ -1,0 +1,171 @@
+/* === Модули === */
+.modules-container {
+  display: flex;
+  height: 100vh;
+  background: linear-gradient(to bottom, #e0e7ff, #ffffff);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.sidebar {
+  width: clamp(180px, 15vw, 220px);
+  padding: clamp(0.8rem, 1vw, 1.2rem);
+  display: flex;
+  align-items: flex-start;
+}
+
+.header-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: clamp(1rem, 2vw, 2rem);
+}
+
+.title {
+  font-size: clamp(1.2rem, 2vw, 1.8rem);
+  font-weight: bold;
+  color: #0046a0;
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  width: 100%;
+  max-width: 900px;
+}
+
+.module-card {
+  background: linear-gradient(to right, #0046a0, #0080ff);
+  color: white;
+  padding: 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  text-align: left;
+}
+
+.module-card:hover {
+  background: white;
+  color: #0046a0;
+  transform: scale(1.05);
+  border: 2px solid #0046a0;
+}
+
+.module-card h2 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.module-card p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* === Подробности модуля === */
+.module-details-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex: 1;
+  overflow: auto;
+}
+
+.module-details {
+  display: flex;
+  flex-direction: column;
+}
+.module-details-tittle {
+  margin-bottom: 10px;
+  text-align: start;
+  font-size: 2rem;
+  color: #0051c9;
+}
+
+
+.module-details h1 {
+  font-size: 2rem;
+  color: #0051c9;
+}
+
+.module-course {
+  white-space: nowrap;
+  display: flex;
+  align-items: flex-end;
+  background: linear-gradient(to right, #0046a0, #0080ff);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 10px;
+  margin: 0;
+}
+.module-date {
+  white-space: nowrap;
+  display: flex;
+  align-items: flex-end;
+  background: #333;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 10px;
+  margin: 0;
+}
+.delete-lesson-btn {
+  background: linear-gradient(to right, #cc0000, #ff4444);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 1vw;
+  padding: 0.5vw 1.2vw;
+  font-size: clamp(0.8rem, 1vw, 1rem);
+  margin-left: 1vw;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.delete-lesson-btn:hover {
+  background: #b30000;
+  transform: scale(1.05);
+}
+
+.delete-lesson-btn:active {
+  transform: scale(0.97);
+  filter: brightness(0.9);
+}
+
+
+/* === Предметы === */
+.subject-container {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.subject-card {
+  background: linear-gradient(to right, #0046a0, #0077FF);
+  color: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.subject-card:hover {
+  transform: scale(1.05);
+  background: linear-gradient(to left, #0046a0, #0066FF);
+}
+
+.subject-card h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.subject-card p {
+  font-size: 14px;
+  opacity: 0.8;
+}
+

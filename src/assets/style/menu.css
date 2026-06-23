@@ -1,0 +1,89 @@
+/* === Меню кнопка === */
+.menu-toggle {
+  position: fixed;
+  left: 15px;
+  z-index: 1001;
+  cursor: pointer;
+  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+}
+
+.menu-toggle:hover {
+  transform: scale(1.2);
+}
+
+/* === Меню === */
+.menu-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 100%;
+  background-color: #ffffff;
+  padding: 1rem;
+  padding-bottom: 0;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-container.open {
+  animation: fadeInLeft 0.4s ease-in-out forwards;
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1vw;
+}
+
+.menu-title {
+  color: #0046a0;
+  font-size: 18px;
+  font-weight: bold;
+  border-bottom: 2px solid #0046a0;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.menu-close {
+  cursor: pointer;
+  stroke: #0046a0;
+  width: 2vw;
+  height: 2vw;
+  font-size: 28px;
+  color: #0046a0;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.menu-close:hover {
+  stroke: #ff0000;
+  transition: 0.2s;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #0046a0;
+  stroke: #0046a0;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background-color: #0046a0;
+  stroke: white;
+  color: white;
+}
+
+
