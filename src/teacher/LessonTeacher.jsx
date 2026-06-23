@@ -7,16 +7,8 @@ import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
 import withSessionGuard from '../utils/withSessionGuard';
 import { getSession } from '../utils/session';
+import { downloadFile } from '../utils/fileDownload';
 import '../assets/style.css';
-
-const triggerDownload = (url) => {
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = '';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
 
 function LessonTeacher({ setToast }) {
   const { lessonId } = useParams();
@@ -209,7 +201,12 @@ function LessonTeacher({ setToast }) {
                           <>
                             <td>
                               <button
-                                onClick={() => triggerDownload(getFullPath(s.file_path))}
+                                onClick={() =>
+                                  downloadFile(
+                                    getFullPath(s.file_path),
+                                    s.file_path.split('/').pop()
+                                  ).catch((err) => handleError(err, setToast))
+                                }
                                 className="file-link-button"
                               >
                                 {s.file_path.split('/').pop()}

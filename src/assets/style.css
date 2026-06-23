@@ -201,9 +201,12 @@ html, body {
 }
 
 .menu-title {
-  font-size: 1.2vw;
-  font-weight: bold;
   color: #0046a0;
+  font-size: 18px;
+  font-weight: bold;
+  border-bottom: 2px solid #0046a0;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 .menu-close {
@@ -211,28 +214,15 @@ html, body {
   stroke: #0046a0;
   width: 2vw;
   height: 2vw;
-}
-
-.menu-close:hover {
-  stroke: #ff0000;;
-  transition: 0.2s;
-}
-
-.menu-close {
   font-size: 28px;
   color: #0046a0;
   text-align: right;
-  cursor: pointer;
   margin-bottom: 10px;
 }
 
-.menu-title {
-  color: #0046a0;
-  font-size: 18px;
-  font-weight: bold;
-  border-bottom: 2px solid #0046a0;
-  padding-bottom: 6px;
-  margin-bottom: 10px;
+.menu-close:hover {
+  stroke: #ff0000;
+  transition: 0.2s;
 }
 
 .menu-item {

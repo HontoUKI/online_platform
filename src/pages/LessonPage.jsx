@@ -7,16 +7,8 @@ import ErrorFallback from '../components/ErrorFallback';
 import { apiRequest } from '../utils/apiRequest';
 import { handleError } from '../utils/handleError';
 import { getSession } from '../utils/session';
+import { downloadFile, openFile } from '../utils/fileDownload';
 import '../assets/style.css';
-
-const triggerDownload = (url) => {
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = '';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
 
 function LessonPage({ setToast }) {
   const { lessonId } = useParams();
@@ -203,14 +195,17 @@ function LessonPage({ setToast }) {
               ) : (
                 <>
                   {lesson.content_url ? (
-                    <a
-                      href={getFullPath(lesson.content_url)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openFile(getFullPath(lesson.content_url)).catch((err) =>
+                          handleError(err, setToast)
+                        )
+                      }
                       className="lesson-link-button"
                     >
                       Перейти к материалу
-                    </a>
+                    </button>
                   ) : lesson.description ? (
                     <p className="lesson-description">{lesson.description}</p>
                   ) : (
@@ -243,7 +238,12 @@ function LessonPage({ setToast }) {
                         {submittedFiles.map((f) => (
                           <li key={f.id}>
                             <button
-                              onClick={() => triggerDownload(getFullPath(f.file_path))}
+                              onClick={() =>
+                                downloadFile(
+                                  getFullPath(f.file_path),
+                                  f.file_path.split('/').pop()
+                                ).catch((err) => handleError(err, setToast))
+                              }
                               className="file-link-button"
                             >
                               {f.file_path.split('/').pop()}

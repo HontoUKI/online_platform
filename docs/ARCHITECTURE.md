@@ -45,8 +45,11 @@ The backend route reference lives in the API repo at `docs/API.md`.
 
 ## Decisions To Revisit
 
-- **Deduplicate CSS rules.** `assets/style.css` is large; some rules overlap with
-  `admin/assets/style.css`. Tokens are in place, but a rule-level consolidation pass remains.
+- **CSS rule duplication — resolved.** The admin sidebar no longer reuses the global `Menu`
+  component's class names: its selectors are namespaced as `.admin-menu-*`, so
+  `assets/style.css` and `admin/assets/style.css` no longer collide, and the duplicated
+  `.menu-close`/`.menu-title` blocks in `assets/style.css` were merged. `assets/style.css` is
+  still large and could be split per area later.
 - **Token refresh.** The app stores an access token with a local `expires_at` and redirects to
   login on expiry; there is no refresh flow.
 - **Typed API layer.** Request/response shapes are documented but not type-checked; a typed

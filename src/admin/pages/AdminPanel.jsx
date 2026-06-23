@@ -61,20 +61,20 @@ function AdminPanel() {
 
   return (
     <div className="admin-panel">
-      <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
+      <div className="admin-menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
         <svg width="30" height="30" viewBox="0 0 24 25" fill="none">
           <path d="M3 6.76855H21M3 12.0186H21M3 17.2686H21" stroke="#0046a0" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </div>
 
-      <div className={`menu-container ${menuOpen ? "open" : ""}`}>
-        <div className="menu-close" onClick={() => setMenuOpen(false)}></div>
-        <div className="menu-title">Админ-панель</div>
+      <div className={`admin-menu-container ${menuOpen ? "open" : ""}`}>
+        <div className="admin-menu-close" onClick={() => setMenuOpen(false)}></div>
+        <div className="admin-menu-title">Админ-панель</div>
 
         {sections.map((s) => (
           <button
             key={s.id}
-            className={`menu-item ${activeSection === s.id ? "selected" : ""}`}
+            className={`admin-menu-item ${activeSection === s.id ? "selected" : ""}`}
             onClick={() => {
               setActiveSection(s.id);
               setMenuOpen(false);

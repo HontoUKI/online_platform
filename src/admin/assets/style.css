@@ -7,7 +7,7 @@
 }
 
 /* Меню: кнопка вызова */
-.menu-toggle {
+.admin-menu-toggle {
   position: fixed;
   top: 20px;
   left: 20px;
@@ -16,12 +16,12 @@
   transition: transform 0.4s ease-in-out;
 }
 
-.menu-toggle:hover {
+.admin-menu-toggle:hover {
   transform: scale(1.2);
 }
 
 /* Меню: панель */
-.menu-container {
+.admin-menu-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -39,12 +39,12 @@
   overflow-y: auto;
 }
 
-.menu-container.open {
+.admin-menu-container.open {
   transform: translateX(0);
 }
 
 /* Меню: заголовок и крестик */
-.menu-close {
+.admin-menu-close {
   font-size: 28px;
   color: #0046a0;
   text-align: right;
@@ -52,7 +52,7 @@
   margin-bottom: 10px;
 }
 
-.menu-title {
+.admin-menu-title {
   color: #0046a0;
   font-size: 18px;
   font-weight: bold;
@@ -62,7 +62,7 @@
 }
 
 /* Кнопки разделов */
-.menu-item {
+.admin-menu-item {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -80,13 +80,13 @@
   width: 100%;
 }
 
-.menu-item:hover {
+.admin-menu-item:hover {
   background-color: #0046a0;
   color: white;
   stroke: white;
 }
 
-.menu-item.selected {
+.admin-menu-item.selected {
   background-color: #0046a0;
   color: white;
   font-weight: 600;
@@ -128,7 +128,7 @@
     padding: 80px 20px 20px;
   }
 
-  .menu-container {
+  .admin-menu-container {
     width: 100%;
   }
 }
