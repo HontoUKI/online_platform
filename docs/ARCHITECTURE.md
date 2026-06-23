@@ -1,5 +1,11 @@
 # Architecture
 
+## Background
+
+The app began as an MVP under tight deadlines, so the early code prioritised working features.
+Leftover traces (inline styles, duplicated helpers, scattered `localStorage` access) have been
+cleaned up; "Decisions To Revisit" lists what remains.
+
 ## Shape
 
 A React + Vite single-page app. Routing is defined in
