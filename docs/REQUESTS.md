@@ -104,9 +104,11 @@ Response: `{ url }`, used as `content_url`.
 
 **POST `/lessons/{lesson_id}/submit-homework`** — multipart `FormData`
 ```text
-file: <File>   (repeatable, up to 5)
+files: <File>   (repeatable, up to 5; 20 MB total)
 comment: string (optional)
 ```
+At least one of `files`/`comment` is required. The submission and its files are stored
+normalized (one row per file); `GET .../my-submissions` returns `files: [{ id, file_path }]`.
 
 **PATCH `/lessons/submission/{submission_id}/grade`**
 ```json

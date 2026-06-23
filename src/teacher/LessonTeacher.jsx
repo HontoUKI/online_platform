@@ -200,17 +200,23 @@ function LessonTeacher({ setToast }) {
                         ) : (
                           <>
                             <td>
-                              <button
-                                onClick={() =>
-                                  downloadFile(
-                                    getFullPath(s.file_path),
-                                    s.file_path.split('/').pop()
-                                  ).catch((err) => handleError(err, setToast))
-                                }
-                                className="file-link-button"
-                              >
-                                {s.file_path.split('/').pop()}
-                              </button>
+                              {(s.files || []).map((sf, idx) => (
+                                <React.Fragment key={sf.id}>
+                                  {idx > 0 && ', '}
+                                  <button
+                                    onClick={() =>
+                                      downloadFile(
+                                        getFullPath(sf.file_path),
+                                        sf.file_path.split('/').pop()
+                                      ).catch((err) => handleError(err, setToast))
+                                    }
+                                    className="file-link-button"
+                                  >
+                                    {sf.file_path.split('/').pop()}
+                                  </button>
+                                </React.Fragment>
+                              ))}
+                              {(!s.files || s.files.length === 0) && '—'}
                             </td>
                             <td>{s.comment || '—'}</td>
                             <td>

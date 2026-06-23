@@ -97,7 +97,7 @@ function LessonPage({ setToast }) {
     }
 
     const formData = new FormData();
-    homeworkFiles.forEach((file) => formData.append('file', file));
+    homeworkFiles.forEach((file) => formData.append('files', file));
     if (comment) formData.append('comment', comment);
 
     try {
@@ -237,17 +237,22 @@ function LessonPage({ setToast }) {
                       <ul>
                         {submittedFiles.map((f) => (
                           <li key={f.id}>
-                            <button
-                              onClick={() =>
-                                downloadFile(
-                                  getFullPath(f.file_path),
-                                  f.file_path.split('/').pop()
-                                ).catch((err) => handleError(err, setToast))
-                              }
-                              className="file-link-button"
-                            >
-                              {f.file_path.split('/').pop()}
-                            </button>
+                            {f.files.map((sf, idx) => (
+                              <React.Fragment key={sf.id}>
+                                {idx > 0 && ', '}
+                                <button
+                                  onClick={() =>
+                                    downloadFile(
+                                      getFullPath(sf.file_path),
+                                      sf.file_path.split('/').pop()
+                                    ).catch((err) => handleError(err, setToast))
+                                  }
+                                  className="file-link-button"
+                                >
+                                  {sf.file_path.split('/').pop()}
+                                </button>
+                              </React.Fragment>
+                            ))}
                             {f.comment && (
                               <em className="submission-comment">— {f.comment}</em>
                             )}
